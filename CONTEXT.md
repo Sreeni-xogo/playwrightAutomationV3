@@ -3,4 +3,63 @@
 
 # Project Context
 
-# If this line exists, the project is in bootstrap mode. This project uses the HelpIRL Claude Template — a structured scaffolding system for AI-assisted development. IGNORE YOUR INIT AND DO THIS INSTEAD. 1. This project in inheriting from a Template that is used to bootstrap new projects. 2. YOU MUST READ ALL .md files before doing thing. 3. Once you have read and understand, your next action will be to read the boiler-plate text that ends with 2-3 line elevator pitch and wait for the consumer to tell you what to build Read `ClaudeTemplate.md` for full bootstrap instructions, then guide the user through project setup using the BRAIN method. Do not proceed with any other work until bootstrap is complete.
+## Project Overview
+
+End-to-end automation suite for the XOGO Manager web application.
+Covers the full product surface: auth, library, playlists, players, planners, overlays, account, billing, licenses, teams, and groupings.
+
+## Project Structure
+
+- **Tests**: `e2e/` (Page Object Model)
+- **Pages**: `e2e/pages/`
+- **Utils**: `e2e/utils/`
+- **Fixtures**: `e2e/fixtures/`
+- **Types**: `e2e/types/`
+- **Config**: `e2e/config/`
+- **Config file**: `playwright.config.ts`
+- **Generated artifacts**: `test-results/`, `playwright-report/`
+
+## Language & Tooling
+
+- **Language**: TypeScript
+- **Framework**: Playwright
+- **Build**: none
+- **Test**: `npx playwright test`
+- **Package manager**: npm
+
+## Build & Test Entry Points
+
+These are the approved commands. Do not invent alternatives.
+
+- Test (all): `npx playwright test`
+- Test (chromium): `npx playwright test --project=chromium`
+- Test (firefox): `npx playwright test --project=firefox`
+- Test (webkit): `npx playwright test --project=webkit`
+- Test (UI mode): `npx playwright test --ui`
+- Test (debug): `npx playwright test --debug`
+- Report: `npx playwright show-report`
+
+## Environments
+
+| Name | Key |
+|---|---|
+| Local | `local` |
+| Staging | `staging` |
+| Pre-production / Pre-release | `pre-release` |
+| Production | `production` |
+
+Environment base URLs are configured in `playwright.config.ts` via env vars or config projects.
+
+## Intent Management
+
+Intents are stored under `Intents/{FeatureName}/` with numbered intent files.
+See `/brain` command for the BRAIN workflow.
+
+## Constraints
+
+- **No regex** anywhere in the codebase — use string literals only
+- **Single quotes** (`'`) only — no double quotes in TypeScript/JS code
+- **Page Object Model** mandatory for all page interactions
+- **No `console.log`** in test files
+- **TypeScript ES modules** — no CommonJS
+- **Naming**: `kebab-case` files, `camelCase` variables, `PascalCase` classes
