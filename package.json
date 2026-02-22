@@ -1,0 +1,34 @@
+{
+  "name": "playwrightautomationv3",
+  "version": "1.0.0",
+  "description": "A starter template for AI-assisted development with strong guardrails,\r repeatability, and auditability.",
+  "main": "index.js",
+  "scripts": {
+    "test:local": "playwright test --project=local",
+    "test:staging": "playwright test --project=staging",
+    "test:pre-release": "playwright test --project=pre-release",
+    "test:prod": "playwright test --project=production",
+    "test:ui": "playwright test --ui",
+    "test:debug": "playwright test --debug",
+    "report": "playwright show-report"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Sreeni-xogo/playwrightAutomationV3.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/Sreeni-xogo/playwrightAutomationV3/issues"
+  },
+  "homepage": "https://github.com/Sreeni-xogo/playwrightAutomationV3#readme",
+  "devDependencies": {
+    "@playwright/cli": "^0.1.1",
+    "@playwright/test": "^1.58.2",
+    "@types/node": "^25.3.0",
+    "dotenv": "^17.3.1",
+    "typescript": "^5.9.3"
+  }
+}
