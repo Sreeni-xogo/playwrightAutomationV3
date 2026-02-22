@@ -1,5 +1,5 @@
 import { expect, type Page, type Locator } from '@playwright/test';
-import { BasePage } from './BasePage';
+import { BasePage } from '../BasePage';
 
 // AIDEV-NOTE: Sign Up is a 2-step wizard.
 // Step 1 (Account Info): email, password, confirm password, EULA toggle, optional reseller/referral codes
