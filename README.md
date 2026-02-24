@@ -56,6 +56,18 @@ for AI-assisted development. See `ClaudeTemplate.md` for details.
 - `/review` — Code review
 - `/status` — Project status overview
 
+### Required Claude Skill — playwright-cli
+
+This project uses the `playwright-cli` skill for browser automation, form filling, screenshots, and interactive web testing from within Claude.
+
+**Each team member must install this skill once on their machine:**
+
+1. Open Claude Code settings (`/config` or `~/.claude/`)
+2. Add the `playwright-cli` skill to your skills list
+3. Restart Claude Code
+
+> Without this skill, Claude cannot automate browser interactions for this project.
+
 ## License
 
 ISC
