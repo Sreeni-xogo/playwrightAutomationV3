@@ -31,6 +31,17 @@ export default defineConfig({
     video: 'on-first-retry',
   },
   projects: [
+    // AIDEV-NOTE: staging-setup logs in once and saves .auth/staging-state.json.
+    // Authenticated spec files opt in via test.use({ storageState: '.auth/staging-state.json' }).
+    // Auth spec files do NOT opt in — they run unauthenticated to test the login/signup flows.
+    {
+      name: 'staging-setup',
+      testMatch: 'e2e/auth/staging.setup.ts',
+      use: {
+        ...devices['Desktop Chrome'],
+        baseURL: baseUrls['staging'],
+      },
+    },
     {
       name: 'local',
       use: {
@@ -40,6 +51,7 @@ export default defineConfig({
     },
     {
       name: 'staging',
+      dependencies: ['staging-setup'],
       use: {
         ...devices['Desktop Chrome'],
         baseURL: baseUrls['staging'],

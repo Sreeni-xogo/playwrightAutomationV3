@@ -91,17 +91,18 @@ export class DashboardPage extends BasePage {
 
   async clickNavLibrary(): Promise<void> {
     await this.navLibraryLink.click();
-    await this.waitForLoad();
+    // AIDEV-NOTE: SPA nav — waitForLoad (domcontentloaded) fires before route change; waitForURL polls until arrival
+    await this.page.waitForURL((url) => url.pathname.includes('/en/library'), { timeout: 10000 });
   }
 
   async clickNavPlaylists(): Promise<void> {
     await this.navPlaylistsLink.click();
-    await this.waitForLoad();
+    await this.page.waitForURL((url) => url.pathname.includes('/en/playlists'), { timeout: 10000 });
   }
 
   async clickNavPlayers(): Promise<void> {
     await this.navPlayersLink.click();
-    await this.waitForLoad();
+    await this.page.waitForURL((url) => url.pathname.includes('/en/players'), { timeout: 10000 });
   }
 
   async clickNavPlanner(): Promise<void> {
@@ -130,17 +131,17 @@ export class DashboardPage extends BasePage {
 
   async clickLibraryViewAll(): Promise<void> {
     await this.libraryViewAllLink.click();
-    await this.waitForLoad();
+    await this.page.waitForURL((url) => url.pathname.includes('/en/library'), { timeout: 10000 });
   }
 
   async clickPlaylistsViewAll(): Promise<void> {
     await this.playlistsViewAllLink.click();
-    await this.waitForLoad();
+    await this.page.waitForURL((url) => url.pathname.includes('/en/playlists'), { timeout: 10000 });
   }
 
   async clickPlayersViewAll(): Promise<void> {
     await this.playersViewAllLink.click();
-    await this.waitForLoad();
+    await this.page.waitForURL((url) => url.pathname.includes('/en/players'), { timeout: 10000 });
   }
 
   // --- Verify methods ---
