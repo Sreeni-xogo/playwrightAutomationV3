@@ -18,6 +18,15 @@ test.describe('Sign In', () => {
     await signInPage.verifyPageElements();
   });
 
+  test('should display all SSO login buttons', async ({ page }) => {
+    const signInPage = new SignInPage(page);
+    await signInPage.goto();
+    await expect(signInPage.microsoftSignInButton).toBeVisible();
+    await expect(signInPage.googleSignInButton).toBeVisible();
+    await expect(signInPage.facebookSignInButton).toBeVisible();
+    await expect(signInPage.appleSignInButton).toBeVisible();
+  });
+
   test('should show email validation error for invalid email', async ({ page }) => {
     const signInPage = new SignInPage(page);
     await signInPage.goto();
