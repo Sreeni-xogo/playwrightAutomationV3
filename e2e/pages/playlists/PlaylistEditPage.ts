@@ -19,7 +19,9 @@ export class PlaylistEditPage extends BasePage {
 
   constructor(page: Page) {
     super(page);
-    this.pageHeading = page.getByRole('heading', { name: 'Edit Playlist', level: 1 });
+    // AIDEV-NOTE: Heading is 'Create Playlist' on /add and 'Edit Playlist' on /:id
+    // filter({ hasText }) matches both without regex
+    this.pageHeading = page.getByRole('heading', { level: 1 }).filter({ hasText: 'Playlist' });
     this.goBackButton = page.getByRole('button', { name: 'Go back' });
     this.saveButton = page.getByRole('button', { name: 'Save' });
     this.playlistNameInput = page.getByRole('textbox', { name: 'Enter playlist name' });
@@ -40,10 +42,13 @@ export class PlaylistEditPage extends BasePage {
 
   async goBack(): Promise<void> {
     await this.goBackButton.click();
-    await this.waitForLoad();
+    // AIDEV-NOTE: SPA nav back to playlists list (PATTERN-002)
+    await this.page.waitForURL((url) => url.pathname.includes('/en/playlists'), { timeout: 10000 });
   }
 
   async setPlaylistName(name: string): Promise<void> {
+    // AIDEV-NOTE: networkidle before fill() — Vue v-model binding (PATTERN-001)
+    await this.page.waitForLoadState('networkidle');
     await this.playlistNameInput.clear();
     await this.playlistNameInput.fill(name);
   }
@@ -54,6 +59,24 @@ export class PlaylistEditPage extends BasePage {
 
   async clickAddItems(): Promise<void> {
     await this.addItemsButton.click();
+  }
+
+  // AIDEV-NOTE: App blocks saving empty playlists — must add at least one item first (PATTERN-009)
+  // Opens the Add Items dialog, switches to URLs tab, adds the first URL item, confirms
+  async addOneItemFromLibrary(): Promise<void> {
+    await this.addItemsButton.click();
+    const dialog = this.page.getByRole('dialog');
+    await dialog.waitFor({ state: 'visible', timeout: 10000 });
+    // URLs tab — deterministic items, no file uploads required
+    await dialog.getByRole('tab', { name: 'URLs' }).click();
+    await this.page.waitForLoadState('networkidle');
+    // Click first URL item's per-row Add button (stages it for addition)
+    await dialog.getByRole('heading', { level: 4 }).first().locator('../..').getByRole('button', { name: 'Add' }).click();
+    // Top-level Add button (dialog header) is enabled once an item is staged
+    const confirmBtn = dialog.getByRole('button', { name: 'Add' }).first();
+    await expect(confirmBtn).toBeEnabled({ timeout: 5000 });
+    await confirmBtn.click();
+    await dialog.waitFor({ state: 'hidden', timeout: 10000 });
   }
 
   async clickScheduleLink(): Promise<void> {

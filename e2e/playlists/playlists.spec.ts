@@ -2,6 +2,9 @@ import { test, expect } from '@playwright/test';
 import { PlaylistsPage } from '../pages/playlists/PlaylistsPage';
 import { PlaylistEditPage } from '../pages/playlists/PlaylistEditPage';
 
+// AIDEV-NOTE: Requires authenticated session — staging-setup saves state, consumed here
+test.use({ storageState: '.auth/staging-state.json' });
+
 const PLAYLIST_NAME = `AutoTest Playlist ${Date.now()}`;
 const PLAYLIST_UPDATED_NAME = `AutoTest Playlist Updated ${Date.now()}`;
 
@@ -34,15 +37,21 @@ test.describe('Playlists — list page', () => {
 // Playlist CRUD — Create → Edit → Delete
 // ---------------------------------------------------------------------------
 
+// AIDEV-NOTE: CRUD tests share state (create → edit → delete same playlist) — must run serially
 test.describe('Playlists — CRUD', () => {
+  test.describe.configure({ mode: 'serial' });
+
   test('create: should create a new playlist', async ({ page }) => {
     const playlistEditPage = new PlaylistEditPage(page);
     await page.goto('/en/playlists/add');
     await playlistEditPage.verifyOnEditPage();
     await playlistEditPage.setPlaylistName(PLAYLIST_NAME);
+    // AIDEV-NOTE: App blocks saving empty playlists — must add one item first (PATTERN-009)
+    await playlistEditPage.addOneItemFromLibrary();
     await playlistEditPage.save();
-    // After save, redirected to the playlists list or edit page for the new playlist
-    expect(page.url()).toContain('/en/playlists');
+    // AIDEV-NOTE: After save with items, app navigates away from /add to /en/playlists/:id
+    await page.waitForURL(url => !url.pathname.endsWith('/add'), { timeout: 15000 });
+    expect(page.url()).toContain('/en/playlists/');
   });
 
   test('edit: should rename the created playlist', async ({ page }) => {
@@ -73,11 +82,10 @@ test.describe('Playlists — CRUD', () => {
     const playlistsPage = new PlaylistsPage(page);
     await playlistsPage.goto();
     await playlistsPage.deletePlaylist(PLAYLIST_UPDATED_NAME);
-    // Confirm dialog if present
-    const confirmButton = page.getByRole('button', { name: 'Delete' }).last();
-    if (await confirmButton.isVisible()) {
-      await confirmButton.click();
-    }
-    await expect(page.getByRole('heading', { name: PLAYLIST_UPDATED_NAME, level: 5 })).not.toBeVisible({ timeout: 10000 });
+    // AIDEV-NOTE: Confirmation dialog always appears — waitFor before click (PATTERN-008)
+    const confirmDeleteButton = page.getByRole('dialog').getByRole('button', { name: 'Delete' });
+    await confirmDeleteButton.waitFor({ state: 'visible', timeout: 5000 });
+    await confirmDeleteButton.click();
+    await expect(page.locator('h5', { hasText: PLAYLIST_UPDATED_NAME })).not.toBeVisible({ timeout: 10000 });
   });
 });

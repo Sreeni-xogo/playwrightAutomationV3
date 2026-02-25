@@ -39,32 +39,41 @@ export class PlaylistsPage extends BasePage {
     await this.waitForLoadAndElement(this.pageHeading);
   }
 
-  // AIDEV-NOTE: Locates a playlist card by its exact heading name
+  // AIDEV-NOTE: Playlist card structure: div.tile > [a.card (link), div.card-footer > [div.group > h5, div.flex > buttons]]
+  // h5 is NOT inside a.card — it is in card-footer sibling. Traversal levels from h5:
+  //   1 up = div.pointer-events-none, 2 up = div.group, 3 up = div.card-footer, 4 up = div.tile
+
+  // Locates the tile container by heading name
   getPlaylistCard(name: string): Locator {
-    return this.page.getByRole('heading', { name, level: 5 }).locator('../../../..');
+    return this.page.locator('.tile').filter({ has: this.page.locator('h5', { hasText: name }) });
   }
 
-  // AIDEV-NOTE: Returns the clickable link for a playlist item by heading name
+  // AIDEV-NOTE: a.card is a sibling of div.card-footer inside div.tile — NOT inside the footer
   getPlaylistLink(name: string): Locator {
-    return this.page.getByRole('heading', { name, level: 5 }).locator('../../..').getByRole('link');
+    return this.page.locator('.tile').filter({
+      has: this.page.locator('h5', { hasText: name })
+    }).locator('a.card');
   }
 
+  // AIDEV-NOTE: Buttons are in div.card-footer > div.flex — 3 levels up from h5
   getDuplicateButtonForPlaylist(name: string): Locator {
-    return this.page.getByRole('heading', { name, level: 5 }).locator('../..').getByRole('button', { name: 'Duplicate Playlist' });
+    return this.page.getByRole('heading', { name, level: 5 }).locator('../../..').getByRole('button', { name: 'Duplicate Playlist' });
   }
 
   getDeleteButtonForPlaylist(name: string): Locator {
-    return this.page.getByRole('heading', { name, level: 5 }).locator('../..').getByRole('button', { name: 'Delete' });
+    return this.page.getByRole('heading', { name, level: 5 }).locator('../../..').getByRole('button', { name: 'Delete' });
   }
 
   async clickAddNew(): Promise<void> {
     await this.addNewLink.click();
-    await this.waitForLoad();
+    // AIDEV-NOTE: SPA nav — waitForURL polls until route change completes (PATTERN-002)
+    await this.page.waitForURL((url) => url.pathname.includes('/en/playlists/add'), { timeout: 10000 });
   }
 
   async clickPlaylist(name: string): Promise<void> {
     await this.getPlaylistLink(name).click();
-    await this.waitForLoad();
+    // AIDEV-NOTE: SPA nav — navigates to /en/playlists/:id (edit page)
+    await this.page.waitForURL((url) => url.pathname.includes('/en/playlists/'), { timeout: 10000 });
   }
 
   async duplicatePlaylist(name: string): Promise<void> {

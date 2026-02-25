@@ -257,6 +257,88 @@ await expect(page.locator('h5', { hasText: 'Card Title' })).not.toBeVisible({ ti
 
 ---
 
+## PATTERN-009: Empty playlist — Save blocked by validation toast
+
+**Symptom:**
+- Clicking Save on the Create Playlist page does NOT make any API call
+- Toast appears: "This playlist is empty. Add items before publishing."
+- URL stays on `/en/playlists/add`; no playlist created
+- Sentry POSTs are performance transactions, NOT error events (misleading)
+- `page.waitForLoadState('networkidle')` + `fill()` sets DOM value correctly but save still blocked
+
+**Root Cause:**
+The XOGO Manager app enforces that playlists must have at least one media item before they can be saved. The Save handler checks the playlist's item count and short-circuits without making the API call if empty. This is intentional UX.
+
+**Fix:**
+Add at least one library item to the playlist BEFORE clicking Save. Use the "Add Items" modal:
+```typescript
+async addOneItemFromLibrary(): Promise<void> {
+  await this.addItemsButton.click();
+  const dialog = this.page.getByRole('dialog');
+  await dialog.waitFor({ state: 'visible', timeout: 10000 });
+  // URLs tab has deterministic items, no file uploads
+  await dialog.getByRole('tab', { name: 'URLs' }).click();
+  await this.page.waitForLoadState('networkidle');
+  // Stage first URL item
+  await dialog.getByRole('heading', { level: 4 }).first().locator('../..').getByRole('button', { name: 'Add' }).click();
+  // Confirm — top-level Add button (in dialog header) becomes enabled after staging
+  const confirmBtn = dialog.getByRole('button', { name: 'Add' }).first();
+  await expect(confirmBtn).toBeEnabled({ timeout: 5000 });
+  await confirmBtn.click();
+  await dialog.waitFor({ state: 'hidden', timeout: 10000 });
+}
+```
+
+In create test: call `addOneItemFromLibrary()` BEFORE `save()`. After save with items, the app navigates to `/en/playlists/:id`. Use `waitForURL(url => !url.pathname.endsWith('/add'))`.
+
+**Anti-Patterns:**
+- ❌ `save()` on empty playlist — silently blocked, no API call, no error
+- ❌ Interpreting Sentry POST as JS error — Sentry tracks performance transactions during navigation, not just errors
+- ❌ `expect(page.url()).toContain('/en/playlists')` — passes trivially on `/en/playlists/add` even when save is blocked
+- ✅ Always add at least one item before saving a new playlist
+
+---
+
+## PATTERN-010: Playlist card — h5 not inside a.card (same as library, tile structure)
+
+**Symptom:**
+- `getByRole('heading', { name, level: 5 }).locator('../../..').getByRole('link')` times out
+- `getByRole('heading', { name, level: 5 }).locator('../..').getByRole('button', { name: 'Delete' })` times out
+- `verifyPlaylistVisible(name)` passes (h5 IS visible) but `clickPlaylist(name)` fails
+
+**Root Cause:**
+Playlist card DOM structure:
+```
+div.tile
+  ├── a.card          ← clickable link (thumbnail/overlay)
+  └── div.card-footer
+        ├── div.group > div.pointer-events-none > h5  ← name
+        └── div.flex > [Duplicate] [Delete] buttons
+```
+The `a.card` link is a SIBLING of `div.card-footer`, NOT an ancestor. h5 traversal levels:
+- 1 up = div.pointer-events-none, 2 up = div.group, 3 up = div.card-footer, 4 up = div.tile
+
+**Fix:**
+```typescript
+// Correct link locator — scope to .tile, then a.card sibling
+getPlaylistLink(name: string): Locator {
+  return this.page.locator('.tile').filter({
+    has: this.page.locator('h5', { hasText: name })
+  }).locator('a.card');
+}
+
+// Correct button locators — go 3 levels up to div.card-footer
+getDuplicateButtonForPlaylist(name: string): Locator {
+  return this.page.getByRole('heading', { name, level: 5 }).locator('../../..').getByRole('button', { name: 'Duplicate Playlist' });
+}
+
+getDeleteButtonForPlaylist(name: string): Locator {
+  return this.page.getByRole('heading', { name, level: 5 }).locator('../../..').getByRole('button', { name: 'Delete' });
+}
+```
+
+---
+
 ## ANTI-PATTERNS — Never Do These
 
 | Anti-Pattern | Why | Use Instead |
