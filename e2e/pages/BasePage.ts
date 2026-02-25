@@ -1,4 +1,4 @@
-import { type Page, type Locator } from '@playwright/test';
+import { expect, type Page, type Locator } from '@playwright/test';
 
 export class BasePage {
   protected readonly page: Page;
@@ -13,6 +13,11 @@ export class BasePage {
 
   async waitForLoad(): Promise<void> {
     await this.page.waitForLoadState('domcontentloaded');
+  }
+
+  async waitForLoadAndElement(locator: Locator): Promise<void> {
+    await this.page.waitForLoadState('domcontentloaded');
+    await expect(locator).toBeVisible();
   }
 
   async getTitle(): Promise<string> {
