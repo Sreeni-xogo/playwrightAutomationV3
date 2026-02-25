@@ -90,6 +90,12 @@ At natural pause points, Claude appends a 1-line summary to `Memory/_sessions.md
 
 If a tool rejects an action, explain the failure and ask for guidance. Do not retry blindly.
 
+## Coding Standards
+
+- **No regex** — never use `/pattern/` syntax anywhere in the codebase; string literals only.
+- **Single quotes** — always use `''`; never double quotes in TypeScript/JS code.
+- **No `console.log`** in test or page files.
+
 ## Output
 
 Be concise. Prefer structured output. Do not invent policies, branches, or permissions.
