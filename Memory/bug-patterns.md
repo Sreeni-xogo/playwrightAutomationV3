@@ -209,6 +209,54 @@ async login(email: string, password: string): Promise<void> {
 
 ---
 
+## PATTERN-008: Library card — invisible overlay link, h5 not inside anchor
+
+**Symptom:**
+- `page.getByText('Card Title').click()` is intercepted or does nothing (no navigation)
+- `div.group locator('a')` times out — `div.group` is the TITLE wrapper, not the card container
+- `click({ force: true })` on h5 fires but no navigation occurs
+
+**Root Cause:**
+XOGO library cards use an invisible `<a class="absolute inset-0 z-10">` overlay link inside `div.card`. The h5 title is in a SIBLING `div.card-footer` — NOT inside the anchor element. There is no way to reach the anchor from the h5 by going down; must go up via ancestor traversal then down.
+
+**Fix (navigation/edit — click the card):**
+Use XPath ancestor traversal from h5 to the card-footer, then up one level, then down to the overlay anchor:
+```typescript
+const editCardLink = page
+  .locator('h5', { hasText: 'Card Title' })
+  .locator('xpath=ancestor::div[contains(@class,"card-footer")]/..//a[contains(@href,"/en/library/")]');
+await editCardLink.click();
+```
+
+**Fix (delete — click the trash icon button):**
+The delete button (trash icon, `i-lucide:trash-2`) has **no aria-label**. Copy button has `aria-label="Copy"`. Both are inside `div.card-footer`. Use `.last()` to get the delete button:
+```typescript
+const footer = page.locator('div.card-footer', { has: page.locator('h5', { hasText: 'Card Title' }) });
+await footer.getByRole('button').last().click();
+```
+
+**Fix (confirm delete dialog):**
+The dialog ALWAYS appears. `isVisible()` is non-retrying — use `waitFor` before clicking:
+```typescript
+const confirmDeleteButton = page.getByRole('dialog').getByRole('button', { name: 'Delete' });
+await confirmDeleteButton.waitFor({ state: 'visible', timeout: 5000 });
+await confirmDeleteButton.click();
+```
+
+**Fix (post-delete assertion):**
+The dialog's `<p>` body also contains the asset name — `getByText()` causes a strict-mode violation. Use `locator('h5')` instead:
+```typescript
+await expect(page.locator('h5', { hasText: 'Card Title' })).not.toBeVisible({ timeout: 10000 });
+```
+
+**Anti-Patterns:**
+- ❌ `page.getByText('Title').click()` — intercepted by overlay, not inside anchor
+- ❌ `page.locator('div.group', { has: heading }).locator('a')` — div.group is the TITLE wrapper, not card container
+- ❌ `card.getByRole('button', { name: 'Delete' })` — trash icon has no aria-label, this times out
+- ❌ `if (await confirmButton.isVisible()) await confirmButton.click()` — non-retrying, races against dialog open animation
+
+---
+
 ## ANTI-PATTERNS — Never Do These
 
 | Anti-Pattern | Why | Use Instead |
@@ -221,3 +269,6 @@ async login(email: string, password: string): Promise<void> {
 | Double quotes in TS/JS | Project + global rule | Single quotes always |
 | `getByRole` without `exact: true` on ambiguous roles | Strict mode violation | Add `exact: true` or `.first()` |
 | `networkidle` in `goto()` / `waitForLoadAndElement()` | Breaks Vue Router link clicks | Only in `fillXxx()` and `solveCaptcha()` |
+| `getByText(name)` after delete (dialog still open) | Strict mode — dialog `<p>` also contains name | `locator('h5', { hasText: name })` |
+| `if (await btn.isVisible()) await btn.click()` for dialogs | Non-retrying, races animation | `waitFor({ state: 'visible' })` then click |
+| `getByRole('button', { name: 'Delete' })` for icon buttons | Trash icon has no aria-label | `footer.getByRole('button').last()` |
