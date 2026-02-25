@@ -55,16 +55,17 @@ export class PlannerEditPage extends BasePage {
 
   async goto(plannerId: string): Promise<void> {
     await this.navigate(`/en/planners/${plannerId}`);
-    await this.waitForLoad();
+    await this.waitForLoadAndElement(this.pageHeading);
   }
 
   async gotoAddNew(): Promise<void> {
     await this.navigate('/en/planners/add');
-    await this.waitForLoad();
+    await this.waitForLoadAndElement(this.addNewPageHeading);
   }
 
   async goBack(): Promise<void> {
     await this.goBackButton.click();
+    await this.waitForLoad();
   }
 
   async setPlannerName(name: string): Promise<void> {

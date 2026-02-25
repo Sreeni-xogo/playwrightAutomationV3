@@ -56,7 +56,7 @@ export class WidgetsPage extends BasePage {
 
   async goto(): Promise<void> {
     await this.navigate('/en/widgets');
-    await this.waitForLoad();
+    await this.waitForLoadAndElement(this.pageHeading);
   }
 
   // AIDEV-NOTE: Returns the full card container for a widget by its exact name
@@ -71,10 +71,12 @@ export class WidgetsPage extends BasePage {
 
   async clickAddNew(): Promise<void> {
     await this.addNewButton.click();
+    await this.waitForLoad();
   }
 
   async clickWidget(name: string): Promise<void> {
     await this.getWidgetLink(name).click();
+    await this.waitForLoad();
   }
 
   async clickTab(tabName: string): Promise<void> {

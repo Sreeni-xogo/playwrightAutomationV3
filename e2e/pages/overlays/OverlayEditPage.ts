@@ -54,16 +54,17 @@ export class OverlayEditPage extends BasePage {
 
   async goto(overlayId: string): Promise<void> {
     await this.navigate(`/en/overlays/${overlayId}`);
-    await this.waitForLoad();
+    await this.waitForLoadAndElement(this.pageHeading);
   }
 
   async gotoAddNew(): Promise<void> {
     await this.navigate('/en/overlays/add');
-    await this.waitForLoad();
+    await this.waitForLoadAndElement(this.addNewPageHeading);
   }
 
   async goBack(): Promise<void> {
     await this.goBackButton.click();
+    await this.waitForLoad();
   }
 
   async setOverlayName(name: string): Promise<void> {

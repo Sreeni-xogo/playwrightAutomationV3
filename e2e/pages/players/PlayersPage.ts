@@ -34,7 +34,7 @@ export class PlayersPage extends BasePage {
 
   async goto(): Promise<void> {
     await this.navigate('/en/players');
-    await this.waitForLoad();
+    await this.waitForLoadAndElement(this.pageHeading);
   }
 
   // AIDEV-NOTE: Returns the card container for a player by its heading name
@@ -49,10 +49,12 @@ export class PlayersPage extends BasePage {
 
   async clickAddNew(): Promise<void> {
     await this.addNewButton.click();
+    await this.waitForLoad();
   }
 
   async clickPlayer(name: string): Promise<void> {
     await this.getPlayerLink(name).click();
+    await this.waitForLoad();
   }
 
   async clickFilter(): Promise<void> {

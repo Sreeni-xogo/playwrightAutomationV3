@@ -47,11 +47,12 @@ export class PlayerDetailPage extends BasePage {
 
   async goto(playerId: string): Promise<void> {
     await this.navigate(`/en/players/${playerId}`);
-    await this.waitForLoad();
+    await this.waitForLoadAndElement(this.pageHeading);
   }
 
   async goBack(): Promise<void> {
     await this.goBackButton.click();
+    await this.waitForLoad();
   }
 
   async setPlayerName(name: string): Promise<void> {
@@ -90,6 +91,7 @@ export class PlayerDetailPage extends BasePage {
 
   async clickViewPlaylist(): Promise<void> {
     await this.viewPlaylistLink.click();
+    await this.waitForLoad();
   }
 
   async toggleShowAdvancedTags(): Promise<void> {

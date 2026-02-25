@@ -39,7 +39,7 @@ export class OverlaysPage extends BasePage {
 
   async goto(): Promise<void> {
     await this.navigate('/en/overlays');
-    await this.waitForLoad();
+    await this.waitForLoadAndElement(this.pageHeading);
   }
 
   // AIDEV-NOTE: Returns the full card container for an overlay by its exact name
@@ -59,10 +59,12 @@ export class OverlaysPage extends BasePage {
 
   async clickAddNew(): Promise<void> {
     await this.addNewLink.click();
+    await this.waitForLoad();
   }
 
   async clickOverlay(name: string): Promise<void> {
     await this.getOverlayLink(name).click();
+    await this.waitForLoad();
   }
 
   async clickSortButton(): Promise<void> {

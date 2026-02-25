@@ -35,11 +35,12 @@ export class PlaylistEditPage extends BasePage {
 
   async goto(playlistId: string): Promise<void> {
     await this.navigate(`/en/playlists/${playlistId}`);
-    await this.waitForLoad();
+    await this.waitForLoadAndElement(this.pageHeading);
   }
 
   async goBack(): Promise<void> {
     await this.goBackButton.click();
+    await this.waitForLoad();
   }
 
   async setPlaylistName(name: string): Promise<void> {
@@ -57,6 +58,7 @@ export class PlaylistEditPage extends BasePage {
 
   async clickScheduleLink(): Promise<void> {
     await this.scheduleLink.click();
+    await this.waitForLoad();
   }
 
   // AIDEV-NOTE: Returns the row container for a specific media item by its filename/alt text

@@ -36,7 +36,7 @@ export class PlaylistsPage extends BasePage {
 
   async goto(): Promise<void> {
     await this.navigate('/en/playlists');
-    await this.waitForLoad();
+    await this.waitForLoadAndElement(this.pageHeading);
   }
 
   // AIDEV-NOTE: Locates a playlist card by its exact heading name
@@ -59,10 +59,12 @@ export class PlaylistsPage extends BasePage {
 
   async clickAddNew(): Promise<void> {
     await this.addNewLink.click();
+    await this.waitForLoad();
   }
 
   async clickPlaylist(name: string): Promise<void> {
     await this.getPlaylistLink(name).click();
+    await this.waitForLoad();
   }
 
   async duplicatePlaylist(name: string): Promise<void> {

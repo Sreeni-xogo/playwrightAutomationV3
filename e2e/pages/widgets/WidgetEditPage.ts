@@ -38,11 +38,12 @@ export class WidgetEditPage extends BasePage {
 
   async goto(widgetId: string): Promise<void> {
     await this.navigate(`/en/widgets/${widgetId}`);
-    await this.waitForLoad();
+    await this.waitForLoadAndElement(this.pageHeading);
   }
 
   async goBack(): Promise<void> {
     await this.goBackButton.click();
+    await this.waitForLoad();
   }
 
   async setWidgetName(name: string): Promise<void> {
