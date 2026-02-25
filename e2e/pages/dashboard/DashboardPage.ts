@@ -86,35 +86,42 @@ export class DashboardPage extends BasePage {
 
   async goto(): Promise<void> {
     await this.navigate('/en');
-    await this.waitForLoad();
+    await this.waitForLoadAndElement(this.pageHeading);
   }
 
   async clickNavLibrary(): Promise<void> {
     await this.navLibraryLink.click();
+    await this.waitForLoad();
   }
 
   async clickNavPlaylists(): Promise<void> {
     await this.navPlaylistsLink.click();
+    await this.waitForLoad();
   }
 
   async clickNavPlayers(): Promise<void> {
     await this.navPlayersLink.click();
+    await this.waitForLoad();
   }
 
   async clickNavPlanner(): Promise<void> {
     await this.navPlannerLink.click();
+    await this.waitForLoad();
   }
 
   async clickNavOverlays(): Promise<void> {
     await this.navOverlaysLink.click();
+    await this.waitForLoad();
   }
 
   async clickNavWidgets(): Promise<void> {
     await this.navWidgetsLink.click();
+    await this.waitForLoad();
   }
 
   async clickNavTeams(): Promise<void> {
     await this.navTeamsLink.click();
+    await this.waitForLoad();
   }
 
   async clickAddNew(): Promise<void> {
@@ -123,14 +130,17 @@ export class DashboardPage extends BasePage {
 
   async clickLibraryViewAll(): Promise<void> {
     await this.libraryViewAllLink.click();
+    await this.waitForLoad();
   }
 
   async clickPlaylistsViewAll(): Promise<void> {
     await this.playlistsViewAllLink.click();
+    await this.waitForLoad();
   }
 
   async clickPlayersViewAll(): Promise<void> {
     await this.playersViewAllLink.click();
+    await this.waitForLoad();
   }
 
   // --- Verify methods ---

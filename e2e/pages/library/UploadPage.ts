@@ -48,12 +48,13 @@ export class UploadPage extends BasePage {
 
   async goto(): Promise<void> {
     await this.navigate('/en/library/upload');
-    await this.waitForLoad();
+    await this.waitForLoadAndElement(this.pageHeading);
   }
 
   // Navigate back to Library using the Go back button
   async goBack(): Promise<void> {
     await this.goBackButton.click();
+    await this.waitForLoad();
   }
 
   // --- Upload actions ---

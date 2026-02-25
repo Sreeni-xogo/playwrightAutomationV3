@@ -74,7 +74,7 @@ export class LibraryPage extends BasePage {
 
   async goto(): Promise<void> {
     await this.navigate('/en/library');
-    await this.waitForLoad();
+    await this.waitForLoadAndElement(this.pageHeading);
   }
 
   // --- Add New actions ---
@@ -86,16 +86,19 @@ export class LibraryPage extends BasePage {
   async clickAddNewMedia(): Promise<void> {
     await this.openAddNewMenu();
     await this.addNewMediaMenuItem.click();
+    await this.waitForLoad();
   }
 
   async clickAddNewUrl(): Promise<void> {
     await this.openAddNewMenu();
     await this.addNewUrlMenuItem.click();
+    await this.waitForLoad();
   }
 
   async clickAddNewWidget(): Promise<void> {
     await this.openAddNewMenu();
     await this.addNewWidgetMenuItem.click();
+    await this.waitForLoad();
   }
 
   // --- Tab filtering ---
@@ -125,6 +128,7 @@ export class LibraryPage extends BasePage {
   // AIDEV-NOTE: Clicks the first asset card link to navigate to its edit/detail page
   async clickFirstItem(): Promise<void> {
     await this.page.locator('h5').first().click();
+    await this.waitForLoad();
   }
 
   // Returns the name text of the first visible asset card
@@ -141,22 +145,27 @@ export class LibraryPage extends BasePage {
 
   async goToNextPage(): Promise<void> {
     await this.nextPageButton.click();
+    await this.waitForLoad();
   }
 
   async goToPrevPage(): Promise<void> {
     await this.prevPageButton.click();
+    await this.waitForLoad();
   }
 
   async goToFirstPage(): Promise<void> {
     await this.firstPageButton.click();
+    await this.waitForLoad();
   }
 
   async goToLastPage(): Promise<void> {
     await this.lastPageButton.click();
+    await this.waitForLoad();
   }
 
   async goToPage(pageNumber: number): Promise<void> {
     await this.page.getByRole('button', { name: `Page ${pageNumber}` }).click();
+    await this.waitForLoad();
   }
 
   // --- Verify methods ---
