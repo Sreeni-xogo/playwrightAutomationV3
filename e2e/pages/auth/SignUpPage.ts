@@ -77,7 +77,7 @@ export class SignUpPage extends BasePage {
 
   async goto(): Promise<void> {
     await this.navigate('/en/auth/signup');
-    await this.waitForLoad();
+    await this.waitForLoadAndElement(this.heading);
   }
 
   // Step 1 methods
@@ -106,6 +106,7 @@ export class SignUpPage extends BasePage {
 
   async clickNext(): Promise<void> {
     await this.nextButton.click();
+    await this.waitForLoad();
   }
 
   // Step 2 methods
@@ -127,6 +128,7 @@ export class SignUpPage extends BasePage {
 
   async clickBack(): Promise<void> {
     await this.backButton.click();
+    await this.waitForLoad();
   }
 
   async clickSignUp(): Promise<void> {
@@ -152,6 +154,7 @@ export class SignUpPage extends BasePage {
 
   async navigateToLogin(): Promise<void> {
     await this.loginLink.click();
+    await this.waitForLoad();
   }
 
   async verifyStep1Elements(): Promise<void> {

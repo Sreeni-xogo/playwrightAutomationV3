@@ -23,7 +23,7 @@ export class ForgotPasswordPage extends BasePage {
 
   async goto(): Promise<void> {
     await this.navigate('/en/auth/forgot-password');
-    await this.waitForLoad();
+    await this.waitForLoadAndElement(this.heading);
   }
 
   async fillEmail(email: string): Promise<void> {
@@ -34,15 +34,17 @@ export class ForgotPasswordPage extends BasePage {
     await this.resetPasswordButton.click();
   }
 
-  // AIDEV-NOTE: Full reset flow — fills email, solves captcha, submits
+  // AIDEV-NOTE: Full reset flow — fills email, solves captcha, submits, waits for DOM stable
   async submitResetRequest(email: string): Promise<void> {
     await this.fillEmail(email);
     await this.solveCaptcha();
     await this.clickResetPassword();
+    await this.waitForLoad();
   }
 
   async navigateToLogin(): Promise<void> {
     await this.backToLoginLink.click();
+    await this.waitForLoad();
   }
 
   async verifyPageElements(): Promise<void> {

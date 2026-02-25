@@ -37,7 +37,7 @@ export class SignInPage extends BasePage {
 
   async goto(): Promise<void> {
     await this.navigate('/en/auth/login');
-    await this.waitForLoad();
+    await this.waitForLoadAndElement(this.logoElmt);
   }
 
   async fillEmail(email: string): Promise<void> {
@@ -52,12 +52,13 @@ export class SignInPage extends BasePage {
     await this.loginButton.click();
   }
 
-  // AIDEV-NOTE: Full login flow — fills credentials, solves captcha, submits
+  // AIDEV-NOTE: Full login flow — fills credentials, solves captcha, submits, waits for DOM stable
   async login(email: string, password: string): Promise<void> {
     await this.fillEmail(email);
     await this.fillPassword(password);
     await this.solveCaptcha();
     await this.clickLoginButton();
+    await this.waitForLoad();
   }
 
   async clearAllFields(): Promise<void> {
@@ -67,10 +68,12 @@ export class SignInPage extends BasePage {
 
   async navigateToForgotPassword(): Promise<void> {
     await this.forgotPasswordLink.click();
+    await this.waitForLoad();
   }
 
   async navigateToSignUp(): Promise<void> {
     await this.signUpLink.click();
+    await this.waitForLoad();
   }
 
   async waitForSuccessfulLogin(expectedUrl: string): Promise<void> {
