@@ -2,6 +2,9 @@ import { test, expect } from '@playwright/test';
 import { LibraryPage } from '../pages/library/LibraryPage';
 import { UploadPage } from '../pages/library/UploadPage';
 
+// AIDEV-NOTE: Requires authenticated session — staging-setup saves state, consumed here
+test.use({ storageState: '.auth/staging-state.json' });
+
 // ---------------------------------------------------------------------------
 // Library — URL CRUD test data
 // ---------------------------------------------------------------------------
@@ -111,7 +114,10 @@ test.describe('Library — upload page (UI only)', () => {
 // AIDEV-NOTE: URL assets use public websites as content source
 // ---------------------------------------------------------------------------
 
+// AIDEV-NOTE: CRUD tests share state (create → edit → delete same asset) — must run serially
 test.describe('Library — URL CRUD', () => {
+  test.describe.configure({ mode: 'serial' });
+
   test('create: should add a new URL asset', async ({ page }) => {
     const libraryPage = new LibraryPage(page);
     await libraryPage.goto();
@@ -129,8 +135,15 @@ test.describe('Library — URL CRUD', () => {
     const libraryPage = new LibraryPage(page);
     await libraryPage.goto();
     await libraryPage.filterByUrls();
-    // Click the asset to open the edit view
-    await page.getByText(TEST_URL_NAME).click();
+    // AIDEV-NOTE: The card link is an invisible <a class="absolute inset-0 z-10"> overlay inside div.card.
+    // h5 lives in div.card-footer (sibling of div.card) — cannot find link via h5 parent.
+    // XPath: go up to ancestor div.card-footer → up one → down to the overlay <a> in sibling div.card.
+    const editCardLink = page
+      .locator('h5', { hasText: TEST_URL_NAME })
+      .locator('xpath=ancestor::div[contains(@class,"card-footer")]/..//a[contains(@href,"/en/library/")]');
+    await editCardLink.click();
+    // AIDEV-NOTE: networkidle required before fill() — Vue v-model (PATTERN-001)
+    await page.waitForLoadState('networkidle');
     const nameInput = page.getByRole('textbox', { name: 'Name' });
     await nameInput.clear();
     await nameInput.fill(TEST_URL_UPDATED_NAME);
@@ -144,14 +157,18 @@ test.describe('Library — URL CRUD', () => {
     const libraryPage = new LibraryPage(page);
     await libraryPage.goto();
     await libraryPage.filterByUrls();
-    // Open context menu on the card and click Delete
-    const card = page.getByRole('heading', { name: TEST_URL_UPDATED_NAME, level: 5 }).locator('../../../..');
-    await card.getByRole('button', { name: 'Delete' }).click();
-    // Confirm deletion in the dialog if one appears
-    const confirmButton = page.getByRole('button', { name: 'Delete' }).last();
-    if (await confirmButton.isVisible()) {
-      await confirmButton.click();
-    }
-    await expect(page.getByText(TEST_URL_UPDATED_NAME)).not.toBeVisible({ timeout: 10000 });
+    // AIDEV-NOTE: Delete button has no aria-label (trash icon only).
+    // div.card-footer contains both the h5 title and the action buttons.
+    // Copy button is first (aria-label="Copy"), delete/trash button is last (no label).
+    const footer = page.locator('div.card-footer', { has: page.locator('h5', { hasText: TEST_URL_UPDATED_NAME }) });
+    await footer.getByRole('button').last().click();
+    // AIDEV-NOTE: Deletion always triggers a confirmation dialog — wait for it then confirm.
+    // getByRole('dialog') scopes the Delete button to avoid matching the card-footer's trash icon.
+    const confirmDeleteButton = page.getByRole('dialog').getByRole('button', { name: 'Delete' });
+    await confirmDeleteButton.waitFor({ state: 'visible', timeout: 5000 });
+    await confirmDeleteButton.click();
+    // AIDEV-NOTE: Use h5 locator (not getByText) to avoid strict-mode violations — dialog also
+    // contains the asset name in its <p> body which creates a second match.
+    await expect(page.locator('h5', { hasText: TEST_URL_UPDATED_NAME })).not.toBeVisible({ timeout: 10000 });
   });
 });
