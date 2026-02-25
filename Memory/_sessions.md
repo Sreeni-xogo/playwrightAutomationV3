@@ -1,22 +1,38 @@
-# Session Memory
+# Session Log
+
+## 2026-02-24
+- 14:22 | BRAIN Arrange | ProjectScaffold — intents 01–05 scaffolded (pre-memory system)
+- 14:32 | Intent Done | ProjectScaffold — Intents 01–05 implemented: e2e/ dirs, playwright.config.ts, BasePage, tsconfig, scripts
+- 14:55 | Intent Done | ProjectScaffold — POMs scaffolded: auth, dashboard, library, content, teams, settings pages
+- 17:57 | Checkpoint | playwrightAutomationV3 — spec files added for all pages
+- 18:29 | Checkpoint | playwrightAutomationV3 — claude commands, settings, session notes updated
+- 18:33 | Checkpoint | playwrightAutomationV3 — playwright-cli skill README added for QA team
 
 ## 2026-02-25
-- Intent Dissolved | ProjectScaffold — Intents 01–05 dissolved, Memory/ProjectScaffold.md created
-- BRAIN Refine | PageLoadStability — goal: add waitForLoadAndElement to all 28 POMs for DOM stability
-- BRAIN Arrange | PageLoadStability — intents 01–05 created
-- Intent Done | PageLoadStability — Intent 01 UpgradeBasePage: added waitForLoadAndElement() to BasePage
-- Intent Done | PageLoadStability — Intent 02 AuthPageWaits: SignInPage, SignUpPage, ForgotPasswordPage updated
-- Intent Done | PageLoadStability — Intent 03 DashboardAndLibraryWaits: DashboardPage, LibraryPage, UploadPage updated
-- Intent Done | PageLoadStability — Intent 04 ContentPageWaits: 10 content POMs updated (Playlists, Players, Planners, Overlays, Widgets)
-- Intent Done | PageLoadStability — Intent 05 TeamsAndSettingsWaits: 13 Teams + Settings POMs updated
-- Intent Dissolved | PageLoadStability — Intents 01–05 dissolved, Memory/PageLoadStability.md created
-- Session End | PageLoadStability — status: Complete
-
-## 2026-02-25 (FixRegexViolations)
-- BRAIN Refine | FixRegexViolations — goal: replace all regex literals in 9 spec files + strengthen no-regex rule in both CLAUDE.md files
-- BRAIN Arrange | FixRegexViolations — intents 01–02 created
-- Intent Done | FixRegexViolations — Intent 01 UpdateClaudeMdRules: global rule de-scoped + project CLAUDE.md Coding Standards added
-- Intent Done | FixRegexViolations — Intent 02 FixSpecFileRegex: 26 regex literals replaced across 9 spec files, grep clean
-- Intent Dissolved | FixRegexViolations — Intent 01 UpdateClaudeMdRules
-- Intent Dissolved | FixRegexViolations — Intent 02 FixSpecFileRegex
-- Session End | FixRegexViolations — status: Complete
+- 10:03 | Checkpoint | playwrightAutomationV3 — BRAIN 3.0 adopted: native Memory/ system replaced Aline
+- 10:07 | Checkpoint | playwrightAutomationV3 — CLAUDE.md Memory Checkpoint section updated for BRAIN 3.0
+- 10:53 | Checkpoint | playwrightAutomationV3 — mcp.json cleaned up, example spec deleted
+- 11:05 | BRAIN Refine | PageLoadStability — goal: add waitForLoadAndElement to all 28 POMs for DOM stability
+- 11:05 | BRAIN Arrange | PageLoadStability — intents 01–05 created
+- 11:06 | Intent Done | PageLoadStability — Intent 01 UpgradeBasePage: waitForLoadAndElement() added to BasePage
+- 11:06 | Intent Done | PageLoadStability — Intent 02 AuthPageWaits: SignInPage, SignUpPage, ForgotPasswordPage updated
+- 11:07 | Intent Done | PageLoadStability — Intent 03 DashboardAndLibraryWaits: DashboardPage, LibraryPage, UploadPage updated
+- 11:08 | Intent Done | PageLoadStability — Intent 04 ContentPageWaits: 10 content POMs updated
+- 11:10 | Intent Done | PageLoadStability — Intent 05 TeamsAndSettingsWaits: 13 Teams + Settings POMs updated
+- 11:10 | Dissolved | PageLoadStability — Intent 01 UpgradeBasePage: added waitForLoadAndElement helper
+- 11:10 | Dissolved | PageLoadStability — Intent 02 AuthPageWaits: 3 auth POMs updated
+- 11:10 | Dissolved | PageLoadStability — Intent 03 DashboardAndLibraryWaits: 3 POMs updated
+- 11:10 | Dissolved | PageLoadStability — Intent 04 ContentPageWaits: 10 content POMs updated
+- 11:10 | Dissolved | PageLoadStability — Intent 05 TeamsAndSettingsWaits: 13 Teams + Settings POMs updated
+- 11:23 | BRAIN Refine | FixRegexViolations — goal: replace all regex literals in 9 spec files + strengthen no-regex rule in both CLAUDE.md files
+- 11:23 | BRAIN Arrange | FixRegexViolations — intents 01–02 created
+- 11:24 | Intent Done | FixRegexViolations — Intent 01 UpdateClaudeMdRules: global rule de-scoped + project CLAUDE.md Coding Standards added
+- 11:28 | Intent Done | FixRegexViolations — Intent 02 FixSpecFileRegex: 26 regex literals replaced across 9 spec files, grep clean
+- 11:33 | Dissolved | FixRegexViolations — Intent 01 UpdateClaudeMdRules: CLAUDE.md rules fixed
+- 11:33 | Dissolved | FixRegexViolations — Intent 02 FixSpecFileRegex: 26 regex literals replaced
+- 11:33 | Dissolved | FixRegexViolations — all 2 intents complete, feature closed
+- 11:37 | Dissolved | ProjectScaffold — retroactive Level 2: all 5 intents complete, feature closed
+- 11:37 | Dissolved | PageLoadStability — Level 2: all 5 intents complete, feature closed
+- 12:19 | Checkpoint | playwrightAutomationV3 — SignInPage updated: Google/Facebook/Apple SSO buttons added, Microsoft locator name fixed
+- 12:30 | Checkpoint | playwrightAutomationV3 — BRAIN 3.0 compliance audit: Level 2 dissolution completed for all 3 BRAINs, _sessions.md format corrected, Memory/.local/_index.md created
+- 12:30 | Session End | playwrightAutomationV3 — status: Active

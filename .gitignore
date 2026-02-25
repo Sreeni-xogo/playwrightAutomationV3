@@ -3,6 +3,9 @@
 CLAUDE.local.md
 **/.claude.local.md
 
+# BRAIN 3.0 local session index (machine-specific, not shared)
+Memory/.local/
+
 # Environment and secrets
 .env
 .env.*
