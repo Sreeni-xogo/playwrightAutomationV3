@@ -42,7 +42,7 @@ export class TeamsGroupingPage extends BasePage {
 
   async goto(): Promise<void> {
     await this.navigate('/en/company/teams-grouping');
-    await this.waitForLoad();
+    await this.waitForLoadAndElement(this.pageHeading);
   }
 
   async clickFeatureToggle(): Promise<void> {

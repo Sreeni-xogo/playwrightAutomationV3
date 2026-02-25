@@ -62,7 +62,7 @@ export class TeamsPage extends BasePage {
 
   async goto(): Promise<void> {
     await this.navigate('/en/teams');
-    await this.waitForLoad();
+    await this.waitForLoadAndElement(this.pageHeading);
   }
 
   async switchToAllTeams(): Promise<void> {
@@ -111,14 +111,17 @@ export class TeamsPage extends BasePage {
   async clickManageTeam(teamName: string): Promise<void> {
     const teamCard = this.page.locator('h3').filter({ hasText: teamName }).locator('../..');
     await teamCard.getByRole('link', { name: 'Manage Team' }).click();
+    await this.waitForLoad();
   }
 
   async goToNextPage(): Promise<void> {
     await this.paginationNav.getByRole('button', { name: 'Next Page' }).click();
+    await this.waitForLoad();
   }
 
   async goToPreviousPage(): Promise<void> {
     await this.paginationNav.getByRole('button', { name: 'Previous Page' }).click();
+    await this.waitForLoad();
   }
 
   async verifyPageLoaded(): Promise<void> {

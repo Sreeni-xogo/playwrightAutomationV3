@@ -18,7 +18,7 @@ export class IntegrationPage extends BasePage {
 
   async goto(): Promise<void> {
     await this.navigate('/en/integrations');
-    await this.waitForLoad();
+    await this.waitForLoadAndElement(this.heading);
   }
 
   async generateIntegrationId(): Promise<void> {

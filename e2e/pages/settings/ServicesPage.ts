@@ -23,7 +23,7 @@ export class ServicesPage extends BasePage {
 
   async goto(): Promise<void> {
     await this.navigate('/en/company/services');
-    await this.waitForLoad();
+    await this.waitForLoadAndElement(this.heading);
   }
 
   async clickRefresh(): Promise<void> {

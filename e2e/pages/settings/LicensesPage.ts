@@ -61,7 +61,7 @@ export class LicensesPage extends BasePage {
 
   async goto(): Promise<void> {
     await this.navigate('/en/licenses');
-    await this.waitForLoad();
+    await this.waitForLoadAndElement(this.pageHeading);
   }
 
   async toggleShowUnassigned(): Promise<void> {
@@ -78,6 +78,7 @@ export class LicensesPage extends BasePage {
 
   async clickBuyMore(): Promise<void> {
     await this.buyMoreLink.click();
+    await this.waitForLoad();
   }
 
   // AIDEV-NOTE: Each row has an action button (likely expand/manage). Using row index or license ID text to target.
@@ -88,10 +89,12 @@ export class LicensesPage extends BasePage {
 
   async goToNextPage(): Promise<void> {
     await this.paginationNav.getByRole('button', { name: 'Next Page' }).click();
+    await this.waitForLoad();
   }
 
   async goToPreviousPage(): Promise<void> {
     await this.paginationNav.getByRole('button', { name: 'Previous Page' }).click();
+    await this.waitForLoad();
   }
 
   async verifyPageLoaded(): Promise<void> {

@@ -18,7 +18,7 @@ export class ReferralPage extends BasePage {
 
   async goto(): Promise<void> {
     await this.navigate('/en/account/referral');
-    await this.waitForLoad();
+    await this.waitForLoadAndElement(this.heading);
   }
 
   async copyReferralCode(): Promise<void> {

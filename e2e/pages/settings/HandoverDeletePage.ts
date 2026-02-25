@@ -30,7 +30,7 @@ export class HandoverDeletePage extends BasePage {
 
   async goto(): Promise<void> {
     await this.navigate('/en/account/handover-delete');
-    await this.waitForLoad();
+    await this.waitForLoadAndElement(this.heading);
   }
 
   async findHandoverUser(email: string): Promise<void> {

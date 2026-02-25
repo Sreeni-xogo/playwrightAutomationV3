@@ -58,7 +58,7 @@ export class MembersPage extends BasePage {
 
   async goto(): Promise<void> {
     await this.navigate('/en/members');
-    await this.waitForLoad();
+    await this.waitForLoadAndElement(this.pageHeading);
   }
 
   async openInviteDialog(): Promise<void> {

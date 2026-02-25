@@ -67,7 +67,7 @@ export class ProfilePage extends BasePage {
 
   async goto(): Promise<void> {
     await this.navigate('/en/account');
-    await this.waitForLoad();
+    await this.waitForLoadAndElement(this.pageHeading);
   }
 
   async fillFirstName(value: string): Promise<void> {

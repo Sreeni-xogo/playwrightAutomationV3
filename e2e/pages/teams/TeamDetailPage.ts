@@ -45,11 +45,12 @@ export class TeamDetailPage extends BasePage {
 
   async gotoById(teamId: number): Promise<void> {
     await this.navigate(`/en/teams/${teamId}`);
-    await this.waitForLoad();
+    await this.waitForLoadAndElement(this.teamNameHeading);
   }
 
   async goBack(): Promise<void> {
     await this.goBackButton.click();
+    await this.waitForLoad();
   }
 
   async clickEditTeam(): Promise<void> {

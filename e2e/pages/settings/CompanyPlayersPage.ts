@@ -27,7 +27,7 @@ export class CompanyPlayersPage extends BasePage {
 
   async goto(): Promise<void> {
     await this.navigate('/en/company/players');
-    await this.waitForLoad();
+    await this.waitForLoadAndElement(this.heading);
   }
 
   async clickExportCsv(): Promise<void> {
@@ -36,14 +36,17 @@ export class CompanyPlayersPage extends BasePage {
 
   async clickNextPage(): Promise<void> {
     await this.nextPageButton.click();
+    await this.waitForLoad();
   }
 
   async clickPreviousPage(): Promise<void> {
     await this.previousPageButton.click();
+    await this.waitForLoad();
   }
 
   async clickPageButton(pageNumber: number): Promise<void> {
     await this.page.getByRole('button', { name: `Page ${pageNumber}` }).click();
+    await this.waitForLoad();
   }
 
   async verifyPageElements(): Promise<void> {

@@ -56,7 +56,7 @@ export class BillingPage extends BasePage {
 
   async goto(): Promise<void> {
     await this.navigate('/en/billing/payment');
-    await this.waitForLoad();
+    await this.waitForLoadAndElement(this.pageHeading);
   }
 
   async clickUpdateBilling(): Promise<void> {
