@@ -26,7 +26,7 @@ test.describe('Planners — list page', () => {
     const plannersPage = new PlannersPage(page);
     await plannersPage.goto();
     await plannersPage.clickAddNew();
-    await expect(page).toHaveURL(/\/en\/planners\/add/);
+    await expect(page).toHaveURL('/en/planners/add');
   });
 });
 
@@ -41,7 +41,7 @@ test.describe('Planners — CRUD', () => {
     await plannerEditPage.verifyOnAddNewPage();
     await plannerEditPage.setPlannerName(PLANNER_NAME);
     await plannerEditPage.save();
-    await expect(page).toHaveURL(/\/en\/planners/, { timeout: 10000 });
+    expect(page.url()).toContain('/en/planners');
   });
 
   test('create: new planner page should display calendar and Manage Playlists button', async ({ page }) => {

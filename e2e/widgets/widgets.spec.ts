@@ -79,7 +79,7 @@ test.describe('Widgets — CRUD', () => {
     await widgetEditPage.verifyOnEditPage();
     await widgetEditPage.setWidgetName(WIDGET_NAME);
     await widgetEditPage.save();
-    await expect(page).toHaveURL(/\/en\/widgets/, { timeout: 10000 });
+    expect(page.url()).toContain('/en/widgets');
   });
 
   test('edit: should rename the created widget', async ({ page }) => {

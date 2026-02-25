@@ -36,41 +36,41 @@ test.describe('Dashboard', () => {
     const dashboardPage = new DashboardPage(page);
     await dashboardPage.goto();
     await dashboardPage.clickNavLibrary();
-    await expect(page).toHaveURL(/\/en\/library/);
+    expect(page.url()).toContain('/en/library');
   });
 
   test('should navigate to Playlists via sidebar link', async ({ page }) => {
     const dashboardPage = new DashboardPage(page);
     await dashboardPage.goto();
     await dashboardPage.clickNavPlaylists();
-    await expect(page).toHaveURL(/\/en\/playlists/);
+    expect(page.url()).toContain('/en/playlists');
   });
 
   test('should navigate to Players via sidebar link', async ({ page }) => {
     const dashboardPage = new DashboardPage(page);
     await dashboardPage.goto();
     await dashboardPage.clickNavPlayers();
-    await expect(page).toHaveURL(/\/en\/players/);
+    expect(page.url()).toContain('/en/players');
   });
 
   test('should navigate to Library via View All link', async ({ page }) => {
     const dashboardPage = new DashboardPage(page);
     await dashboardPage.goto();
     await dashboardPage.clickLibraryViewAll();
-    await expect(page).toHaveURL(/\/en\/library/);
+    expect(page.url()).toContain('/en/library');
   });
 
   test('should navigate to Playlists via View All link', async ({ page }) => {
     const dashboardPage = new DashboardPage(page);
     await dashboardPage.goto();
     await dashboardPage.clickPlaylistsViewAll();
-    await expect(page).toHaveURL(/\/en\/playlists/);
+    expect(page.url()).toContain('/en/playlists');
   });
 
   test('should navigate to Players via View All link', async ({ page }) => {
     const dashboardPage = new DashboardPage(page);
     await dashboardPage.goto();
     await dashboardPage.clickPlayersViewAll();
-    await expect(page).toHaveURL(/\/en\/players/);
+    expect(page.url()).toContain('/en/players');
   });
 });

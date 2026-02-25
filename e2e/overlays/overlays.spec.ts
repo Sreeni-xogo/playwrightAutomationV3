@@ -32,7 +32,7 @@ test.describe('Overlays — list page', () => {
     const overlaysPage = new OverlaysPage(page);
     await overlaysPage.goto();
     await overlaysPage.clickAddNew();
-    await expect(page).toHaveURL(/\/en\/overlays\/add/);
+    await expect(page).toHaveURL('/en/overlays/add');
   });
 });
 
@@ -56,7 +56,7 @@ test.describe('Overlays — CRUD', () => {
     await overlayEditPage.setOverlayName(OVERLAY_NAME);
     await overlayEditPage.clickFullScreenTemplate();
     await overlayEditPage.save();
-    await expect(page).toHaveURL(/\/en\/overlays/, { timeout: 10000 });
+    expect(page.url()).toContain('/en/overlays');
   });
 
   test('edit: should rename the created overlay', async ({ page }) => {

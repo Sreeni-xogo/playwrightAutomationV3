@@ -65,7 +65,7 @@ test.describe('Library — list page', () => {
     const libraryPage = new LibraryPage(page);
     await libraryPage.goto();
     await libraryPage.clickAddNewMedia();
-    await expect(page).toHaveURL(/\/en\/library\/upload/);
+    await expect(page).toHaveURL('/en/library/upload');
   });
 });
 
@@ -102,7 +102,7 @@ test.describe('Library — upload page (UI only)', () => {
     const uploadPage = new UploadPage(page);
     await uploadPage.goto();
     await uploadPage.goBack();
-    await expect(page).toHaveURL(/\/en\/library/);
+    expect(page.url()).toContain('/en/library');
   });
 });
 

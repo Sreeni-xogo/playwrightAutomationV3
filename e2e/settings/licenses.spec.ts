@@ -63,7 +63,7 @@ test.describe('Licenses', () => {
     const licensesPage = new LicensesPage(page);
     await licensesPage.goto();
     await licensesPage.clickBuyMore();
-    await expect(page).toHaveURL(/\/en\/billing\/plans/);
+    await expect(page).toHaveURL('/en/billing/plans');
   });
 });
 

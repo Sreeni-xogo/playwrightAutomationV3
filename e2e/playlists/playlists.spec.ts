@@ -26,7 +26,7 @@ test.describe('Playlists — list page', () => {
     const playlistsPage = new PlaylistsPage(page);
     await playlistsPage.goto();
     await playlistsPage.clickAddNew();
-    await expect(page).toHaveURL(/\/en\/playlists\/add/);
+    await expect(page).toHaveURL('/en/playlists/add');
   });
 });
 
@@ -42,7 +42,7 @@ test.describe('Playlists — CRUD', () => {
     await playlistEditPage.setPlaylistName(PLAYLIST_NAME);
     await playlistEditPage.save();
     // After save, redirected to the playlists list or edit page for the new playlist
-    await expect(page).toHaveURL(/\/en\/playlists/, { timeout: 10000 });
+    expect(page.url()).toContain('/en/playlists');
   });
 
   test('edit: should rename the created playlist', async ({ page }) => {

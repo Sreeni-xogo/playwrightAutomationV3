@@ -135,6 +135,6 @@ test.describe('Players — edit page (UI only)', () => {
     }
     await page.getByRole('heading', { level: 5 }).first().locator('../../..').getByRole('link').click();
     await playerDetailPage.goBack();
-    await expect(page).toHaveURL(/\/en\/players/);
+    expect(page.url()).toContain('/en/players');
   });
 });

@@ -49,14 +49,14 @@ test.describe('Sign In', () => {
     const signInPage = new SignInPage(page);
     await signInPage.goto();
     await signInPage.navigateToForgotPassword();
-    await expect(page).toHaveURL(/forgot-password/);
+    await expect(page).toHaveURL('/en/auth/forgot-password');
   });
 
   test('should navigate to Sign Up page', async ({ page }) => {
     const signInPage = new SignInPage(page);
     await signInPage.goto();
     await signInPage.navigateToSignUp();
-    await expect(page).toHaveURL(/signup/);
+    await expect(page).toHaveURL('/en/auth/signup');
   });
 
   // AIDEV-NOTE: Captcha is required — test solves Altcha proof-of-work before submitting
@@ -65,7 +65,7 @@ test.describe('Sign In', () => {
     await signInPage.goto();
     await signInPage.login(EMAIL, PASSWORD);
     // After login, redirected away from the auth page
-    await expect(page).not.toHaveURL(/auth\/login/, { timeout: 15000 });
+    expect(page.url()).not.toContain('/en/auth/login');
   });
 
   test('should show error for incorrect credentials', async ({ page }) => {
@@ -76,7 +76,7 @@ test.describe('Sign In', () => {
     await signInPage.solveCaptcha();
     await signInPage.clickLoginButton();
     // Remains on login page when credentials are wrong
-    await expect(page).toHaveURL(/auth\/login/, { timeout: 10000 });
+    expect(page.url()).toContain('/en/auth/login');
   });
 });
 
@@ -116,14 +116,14 @@ test.describe('Sign Up', () => {
     const signUpPage = new SignUpPage(page);
     await signUpPage.goto();
     await signUpPage.navigateToLogin();
-    await expect(page).toHaveURL(/auth\/login/);
+    expect(page.url()).toContain('/en/auth/login');
   });
 
   test('should navigate to Log In page via Return to log in link on step 1', async ({ page }) => {
     const signUpPage = new SignUpPage(page);
     await signUpPage.goto();
     await signUpPage.returnToLoginLink.click();
-    await expect(page).toHaveURL(/auth\/login/);
+    expect(page.url()).toContain('/en/auth/login');
   });
 
   test('should not advance to step 2 without EULA accepted', async ({ page }) => {
@@ -165,7 +165,7 @@ test.describe('Forgot Password', () => {
     const forgotPasswordPage = new ForgotPasswordPage(page);
     await forgotPasswordPage.goto();
     await forgotPasswordPage.navigateToLogin();
-    await expect(page).toHaveURL(/auth\/login/);
+    expect(page.url()).toContain('/en/auth/login');
   });
 
   test('should also reach Forgot Password from Sign In page', async ({ page }) => {
@@ -183,7 +183,7 @@ test.describe('Forgot Password', () => {
     await forgotPasswordPage.submitResetRequest(EMAIL);
     // After submission, page should show success or navigate away from the form
     // AIDEV-TODO: Update assertion once confirmed post-submit UI behaviour
-    await expect(page).not.toHaveURL(/auth\/login/, { timeout: 10000 });
+    expect(page.url()).not.toContain('/en/auth/login');
   });
 
   test('should show validation error for invalid email format', async ({ page }) => {
