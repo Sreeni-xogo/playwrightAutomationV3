@@ -90,6 +90,33 @@ At natural pause points, Claude appends a 1-line summary to `Memory/_sessions.md
 
 If a tool rejects an action, explain the failure and ask for guidance. Do not retry blindly.
 
+## Bug Knowledge Base — Playwright Project
+
+This project maintains a living bug pattern library at `Memory/bug-patterns.md`.
+
+### When you encounter a bug or test failure:
+
+1. **Read `Memory/bug-patterns.md` first** — scan for a matching SYMPTOM before doing anything else
+2. If a pattern matches, say: `"Pattern match: PATTERN-00X [name]. Applying known fix."` and apply it directly
+3. If no pattern matches: invoke the `systematic-debugging` skill, investigate root cause, THEN fix
+4. After fixing a NEW bug: ask the user `"Want to save this to Memory/bug-patterns.md? → [1-line summary]"`
+   - If yes: append a new pattern block following the existing format in that file
+
+### Known categories in this project's bug-patterns.md:
+- **PATTERN-001** — Vue v-model not updated (fill without networkidle)
+- **PATTERN-002** — SPA navigation URL race (waitForLoad → waitForURL)
+- **PATTERN-003** — networkidle in goto() breaks nav tests
+- **PATTERN-004** — Unauthenticated tests (missing storageState)
+- **PATTERN-005** — Altcha captcha timing (waitForTimeout → waitForSelector)
+- **PATTERN-006** — Strict mode violation (missing exact:true or .first())
+- **PATTERN-007** — Login redirect not awaited (waitForLoad → waitForURL predicate)
+
+### Hard rules (repeating from Coding Standards — these are the most violated):
+- Every non-auth spec file MUST have `test.use({ storageState: '.auth/staging-state.json' })`
+- Every `fillXxx()` method on Vue pages MUST have `waitForLoadState('networkidle')` before `fill()`
+- Every post-click URL assertion MUST use `waitForURL()` in the POM method (not synchronous `expect(page.url())`)
+- NEVER use regex `/pattern/` anywhere
+
 ## Coding Standards
 
 - **No regex** — never use `/pattern/` syntax anywhere in the codebase; string literals only.
