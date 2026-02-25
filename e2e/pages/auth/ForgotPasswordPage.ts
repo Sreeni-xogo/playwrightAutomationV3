@@ -27,6 +27,8 @@ export class ForgotPasswordPage extends BasePage {
   }
 
   async fillEmail(email: string): Promise<void> {
+    // AIDEV-NOTE: networkidle ensures Vue v-model bindings hydrated before fill()
+    await this.page.waitForLoadState('networkidle');
     await this.emailInput.fill(email);
   }
 

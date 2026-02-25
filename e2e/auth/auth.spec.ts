@@ -45,7 +45,8 @@ test.describe('Sign In', () => {
   test('should toggle password visibility', async ({ page }) => {
     const signInPage = new SignInPage(page);
     await signInPage.goto();
-    await signInPage.fillPassword(PASSWORD);
+    // Use a hardcoded value — toggle only works on non-empty password field (UI behaviour)
+    await signInPage.fillPassword('AnyPassword1!');
     // Password field starts as type="password"
     await expect(signInPage.passwordInput).toHaveAttribute('type', 'password');
     await signInPage.passwordToggle.click();
@@ -141,9 +142,8 @@ test.describe('Sign Up', () => {
     await signUpPage.fillEmail(`test+${Date.now()}@example.com`);
     await signUpPage.fillPassword('TestPassword1!');
     await signUpPage.fillConfirmPassword('TestPassword1!');
-    // EULA not accepted — Next should be disabled or step should not advance
-    await signUpPage.clickNext();
-    await signUpPage.verifyStep1Elements();
+    // EULA not accepted — Next button must remain disabled
+    await expect(signUpPage.nextButton).toBeDisabled();
   });
 
   test('should not advance to step 2 with mismatched passwords', async ({ page }) => {
@@ -153,9 +153,8 @@ test.describe('Sign Up', () => {
     await signUpPage.fillPassword('TestPassword1!');
     await signUpPage.fillConfirmPassword('DifferentPassword1!');
     await signUpPage.acceptEula();
-    await signUpPage.clickNext();
-    // Should remain on step 1
-    await signUpPage.verifyStep1Elements();
+    // Passwords don't match — Next button must remain disabled
+    await expect(signUpPage.nextButton).toBeDisabled();
   });
 });
 

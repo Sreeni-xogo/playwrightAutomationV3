@@ -22,10 +22,11 @@ export class SignInPage extends BasePage {
     super(page);
 
     this.logoElmt = page.locator('img[alt="XOGO"]');
-    this.emailInput = page.getByRole('textbox', { name: 'Enter your email' });
-    this.passwordInput = page.getByRole('textbox', { name: 'Enter your password' });
-    this.passwordToggle = page.locator('div').filter({ hasText: 'Enter your password' }).getByRole('button');
-    this.loginButton = page.getByRole('button', { name: 'Login' });
+    // AIDEV-NOTE: Using direct DOM selectors — getByRole unreliable for Vue-reactive email/password inputs
+    this.emailInput = page.locator('input[type="email"]');
+    this.passwordInput = page.locator('input[name="password"]');
+    this.passwordToggle = page.locator('span[data-slot="trailing"] button');
+    this.loginButton = page.getByRole('button', { name: 'Login', exact: true });
     this.forgotPasswordLink = page.getByRole('link', { name: 'Forgot password' });
     // AIDEV-NOTE: Sign Up link lives in the side panel on the login page
     this.signUpLink = page.getByRole('link', { name: 'Sign Up for Free' });
@@ -47,10 +48,14 @@ export class SignInPage extends BasePage {
   }
 
   async fillEmail(email: string): Promise<void> {
+    // AIDEV-NOTE: networkidle ensures Vue v-model bindings are fully hydrated before fill()
+    // Without this, fill() sets the native DOM value but does not update Vue's reactive state.
+    await this.page.waitForLoadState('networkidle');
     await this.emailInput.fill(email);
   }
 
   async fillPassword(password: string): Promise<void> {
+    await this.page.waitForLoadState('networkidle');
     await this.passwordInput.fill(password);
   }
 
@@ -58,13 +63,14 @@ export class SignInPage extends BasePage {
     await this.loginButton.click();
   }
 
-  // AIDEV-NOTE: Full login flow — fills credentials, solves captcha, submits, waits for DOM stable
+  // AIDEV-NOTE: Full login flow — fills credentials, solves captcha, submits, waits for redirect
   async login(email: string, password: string): Promise<void> {
     await this.fillEmail(email);
     await this.fillPassword(password);
     await this.solveCaptcha();
     await this.clickLoginButton();
-    await this.waitForLoad();
+    // AIDEV-NOTE: SPA login doesn't trigger domcontentloaded — wait for URL to leave the auth/login page
+    await this.page.waitForURL((url) => !url.pathname.includes('/auth/login'), { timeout: 15000 });
   }
 
   async clearAllFields(): Promise<void> {
@@ -87,13 +93,13 @@ export class SignInPage extends BasePage {
   }
 
   async verifyEmailError(expected: string = 'Invalid email address'): Promise<void> {
-    await this.passwordInput.click();
+    await this.page.keyboard.press('Tab');
     await expect(this.emailError).toBeVisible({ timeout: 5000 });
     await expect(this.emailError).toContainText(expected);
   }
 
   async verifyPasswordError(expected: string = 'Password must be at least 6 characters'): Promise<void> {
-    await this.emailInput.click();
+    await this.page.keyboard.press('Tab');
     await expect(this.passwordError).toBeVisible({ timeout: 5000 });
     await expect(this.passwordError).toContainText(expected);
   }

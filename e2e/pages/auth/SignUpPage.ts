@@ -47,10 +47,11 @@ export class SignUpPage extends BasePage {
     this.stepStatus = page.getByRole('status');
 
     // Step 1
-    this.emailInput = page.getByRole('textbox', { name: 'Email' });
-    this.passwordInput = page.getByRole('textbox', { name: 'Password', exact: true });
+    // AIDEV-NOTE: Using direct DOM selectors — getByRole unreliable for Vue-reactive email/password inputs
+    this.emailInput = page.locator('input[name="email"]');
+    this.passwordInput = page.locator('input[name="password"]');
     this.passwordToggle = page.locator('div').filter({ hasText: 'Password' }).nth(1).getByRole('button');
-    this.confirmPasswordInput = page.getByRole('textbox', { name: 'Confirm password' });
+    this.confirmPasswordInput = page.locator('input[name="confirmPassword"]');
     this.confirmPasswordToggle = page.locator('div').filter({ hasText: 'Confirm password' }).getByRole('button');
     this.resellerCodeToggle = page.getByRole('switch', { name: 'I have a reseller code' });
     this.referralCodeToggle = page.getByRole('switch', { name: 'I have a referral code' });
@@ -72,7 +73,7 @@ export class SignUpPage extends BasePage {
     this.signUpButton = page.getByRole('button', { name: 'Sign Up' });
 
     // Side panel
-    this.loginLink = page.getByRole('link', { name: 'Log In' });
+    this.loginLink = page.getByRole('link', { name: 'Log In', exact: true });
   }
 
   async goto(): Promise<void> {
@@ -82,10 +83,13 @@ export class SignUpPage extends BasePage {
 
   // Step 1 methods
   async fillEmail(email: string): Promise<void> {
+    // AIDEV-NOTE: networkidle ensures Vue v-model bindings hydrated before fill()
+    await this.page.waitForLoadState('networkidle');
     await this.emailInput.fill(email);
   }
 
   async fillPassword(password: string): Promise<void> {
+    await this.page.waitForLoadState('networkidle');
     await this.passwordInput.fill(password);
   }
 

@@ -3,8 +3,8 @@
 ## Intents
 | No. | Name | Status | Est. | Actual | Notes |
 |----:|------|--------|-----:|-------:|-------|
-| 01  | RunAuthSpec | In Progress | 1h | | Run auth.spec.ts, capture + categorise all failures |
-| 02  | FixAuthSpec | Todo | 2h | | Fix failures from 01, re-run to confirm clean |
+| 01  | RunAuthSpec | Done | 1h | | Run auth.spec.ts, capture + categorise all failures |
+| 02  | FixAuthSpec | Done | 2h | | Fix failures from 01, re-run to confirm clean — 21/21 passed |
 
 > Claude may update **Status** column. Human owns **Actual** column.
 > Status values: Todo · In Progress · Done · Dissolved ✓ · Blocked

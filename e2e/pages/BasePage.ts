@@ -32,8 +32,11 @@ export class BasePage {
   async solveCaptcha(): Promise<void> {
     const captchaLabel: Locator = this.page.locator('label.altcha-label');
     await captchaLabel.waitFor({ state: 'visible', timeout: 15000 });
+    // AIDEV-NOTE: networkidle required — Vue event listeners for altcha must be bound before click
+    await this.page.waitForLoadState('networkidle');
     await captchaLabel.click();
-    // AIDEV-NOTE: Wait for Altcha proof-of-work computation to complete before form submission
-    await this.page.waitForTimeout(4000);
+    // AIDEV-NOTE: Wait for Altcha proof-of-work to complete — polls until data-state="verified"
+    // Use 'attached' state — the div may not be 'visible' in all environments after verification
+    await this.page.waitForSelector('.altcha[data-state="verified"]', { state: 'attached', timeout: 15000 });
   }
 }
