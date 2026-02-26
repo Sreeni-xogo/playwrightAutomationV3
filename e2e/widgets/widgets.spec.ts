@@ -2,6 +2,9 @@ import { test, expect } from '@playwright/test';
 import { WidgetsPage } from '../pages/widgets/WidgetsPage';
 import { WidgetEditPage } from '../pages/widgets/WidgetEditPage';
 
+// AIDEV-NOTE: Requires authenticated session — staging-setup saves state, consumed here
+test.use({ storageState: '.auth/staging-state.json' });
+
 const WIDGET_NAME = `AutoTest Widget ${Date.now()}`;
 const WIDGET_UPDATED_NAME = `AutoTest Widget Updated ${Date.now()}`;
 
@@ -54,18 +57,18 @@ test.describe('Widgets — list page', () => {
 
 // ---------------------------------------------------------------------------
 // Widgets — CRUD
-// AIDEV-NOTE: Widget creation opens a type-picker dialog before the edit page
+// AIDEV-NOTE: Add New opens a dropdown menu (not dialog) with type options
+// AIDEV-NOTE: Clock menuitem navigates to /en/widgets/add?type=WidgetClock ("Create Widget" heading)
 // ---------------------------------------------------------------------------
 
-test.describe('Widgets — CRUD', () => {
-  test('create: should open Add New widget dialog', async ({ page }) => {
+// AIDEV-NOTE: CRUD tests share module-level name constants — must run serially
+test.describe.serial('Widgets — CRUD', () => {
+  test('create: should open Add New widget menu', async ({ page }) => {
     const widgetsPage = new WidgetsPage(page);
     await widgetsPage.goto();
     await widgetsPage.clickAddNew();
-    // A type picker or modal should appear
-    await expect(
-      page.getByRole('dialog').or(page.getByRole('heading', { name: 'Add New Widget' }))
-    ).toBeVisible({ timeout: 8000 });
+    // AIDEV-NOTE: Add New opens a dropdown menu with Clock/Timer/Weather/Note/JetSet/Programmatic Ads options
+    await expect(page.getByRole('menu', { name: 'Add New' })).toBeVisible({ timeout: 8000 });
   });
 
   test('create: should create a Clock widget', async ({ page }) => {
@@ -73,12 +76,13 @@ test.describe('Widgets — CRUD', () => {
     const widgetEditPage = new WidgetEditPage(page);
     await widgetsPage.goto();
     await widgetsPage.clickAddNew();
-    // Pick Clock type from the dialog
-    await page.getByRole('button', { name: 'Clock' }).click();
-    // Should land on the edit page for the new widget
+    // AIDEV-NOTE: Type picker is a dropdown menu — use menuitem role (not button)
+    await page.getByRole('menuitem', { name: 'Clock' }).click();
+    // AIDEV-NOTE: Navigates to /en/widgets/add?type=WidgetClock with heading 'Create Widget'
     await widgetEditPage.verifyOnEditPage();
     await widgetEditPage.setWidgetName(WIDGET_NAME);
     await widgetEditPage.save();
+    // AIDEV-NOTE: save() waits for navigation from /add to /en/widgets/:id
     expect(page.url()).toContain('/en/widgets');
   });
 
@@ -109,11 +113,19 @@ test.describe('Widgets — CRUD', () => {
     const widgetsPage = new WidgetsPage(page);
     await widgetsPage.goto();
     const card = widgetsPage.getWidgetCard(WIDGET_UPDATED_NAME);
-    // Widgets have two unlabelled action buttons — second is typically Delete
+    // AIDEV-NOTE: Two unlabelled action buttons — last is typically Delete
     await card.getByRole('button').last().click();
-    const confirmButton = page.getByRole('button', { name: 'Delete' }).last();
-    if (await confirmButton.isVisible()) {
-      await confirmButton.click();
+    // AIDEV-NOTE: Confirmation dialog may appear — scope Delete button to dialog
+    const dialog = page.getByRole('dialog');
+    try {
+      await dialog.waitFor({ state: 'visible', timeout: 5000 });
+      await dialog.getByRole('button', { name: 'Delete' }).click();
+    } catch {
+      // No dialog — direct delete without confirmation
+      const confirmButton = page.getByRole('button', { name: 'Delete' }).last();
+      if (await confirmButton.isVisible()) {
+        await confirmButton.click();
+      }
     }
     await expect(page.getByRole('heading', { name: WIDGET_UPDATED_NAME, level: 5 })).not.toBeVisible({ timeout: 10000 });
   });

@@ -24,7 +24,10 @@ export class WidgetEditPage extends BasePage {
 
   constructor(page: Page) {
     super(page);
-    this.pageHeading = page.getByRole('heading', { name: 'Edit Widget', level: 1 });
+    // AIDEV-NOTE: Heading is 'Edit Widget' on existing widgets, 'Create Widget' on new ones
+    this.pageHeading = page.getByRole('heading', { name: 'Edit Widget', level: 1 }).or(
+      page.getByRole('heading', { name: 'Create Widget', level: 1 })
+    );
     this.goBackButton = page.getByRole('button', { name: 'Go back' });
     this.saveButton = page.getByRole('button', { name: 'Save' });
     // AIDEV-NOTE: Name input uses placeholder "Enter widget name"
@@ -47,12 +50,24 @@ export class WidgetEditPage extends BasePage {
   }
 
   async setWidgetName(name: string): Promise<void> {
+    // AIDEV-NOTE: PATTERN-001 — Vue v-model requires networkidle before fill()
+    await this.page.waitForLoadState('networkidle');
     await this.widgetNameInput.clear();
     await this.widgetNameInput.fill(name);
   }
 
   async save(): Promise<void> {
+    const isCreatePage = this.page.url().includes('/add');
     await this.saveButton.click();
+    if (isCreatePage) {
+      // AIDEV-NOTE: PATTERN-002 — Create pages navigate to /en/widgets/:id after save
+      await this.page.waitForURL(
+        (url) => url.pathname.includes('/en/widgets/') && !url.pathname.includes('/add'),
+        { timeout: 15000 }
+      );
+    } else {
+      await this.page.waitForLoadState('networkidle');
+    }
   }
 
   // AIDEV-NOTE: Timer-specific field — returns the title textbox by its label

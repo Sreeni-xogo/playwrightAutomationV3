@@ -65,18 +65,21 @@ export class WidgetsPage extends BasePage {
   }
 
   // AIDEV-NOTE: Returns the clickable link for a widget item by heading name
+  // AIDEV-NOTE: PATTERN-012 — card structure: h5 → 4 levels up = tile wrapper, then a (sibling of card-footer)
   getWidgetLink(name: string): Locator {
-    return this.page.getByRole('heading', { name, level: 5 }).locator('../../..').getByRole('link');
+    return this.page.getByRole('heading', { name, level: 5 }).locator('../../../..').locator('a');
   }
 
   async clickAddNew(): Promise<void> {
     await this.addNewButton.click();
-    await this.waitForLoad();
+    // AIDEV-NOTE: Add New opens a dropdown menu (not a dialog) — wait for menu to be visible
+    await this.page.getByRole('menu', { name: 'Add New' }).waitFor({ state: 'visible', timeout: 5000 });
   }
 
   async clickWidget(name: string): Promise<void> {
     await this.getWidgetLink(name).click();
-    await this.waitForLoad();
+    // AIDEV-NOTE: PATTERN-002 — SPA nav: waitForURL polls until widget edit URL is reached
+    await this.page.waitForURL((url) => url.pathname.includes('/en/widgets/'), { timeout: 10000 });
   }
 
   async clickTab(tabName: string): Promise<void> {
