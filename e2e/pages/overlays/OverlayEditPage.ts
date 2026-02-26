@@ -92,7 +92,7 @@ export class OverlayEditPage extends BasePage {
     await this.saveButton.click();
     const continueButton = this.page.getByRole('button', { name: 'Continue Anyway' });
     try {
-      await continueButton.waitFor({ state: 'visible', timeout: 3000 });
+      await continueButton.waitFor({ state: 'visible', timeout: 10000 });
       await continueButton.click();
     } catch {
       // No dialog appeared — save proceeded without needing confirmation

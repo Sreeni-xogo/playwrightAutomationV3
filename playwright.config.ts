@@ -28,10 +28,13 @@ export default defineConfig({
     // AIDEV-NOTE: JUnit feeds Azure DevOps Tests tab + Test Analytics trending dashboard
     ['junit', { outputFile: 'results/results.xml' }],
   ],
-  // AIDEV-NOTE: Global expect timeout — staging can be slow; 10s prevents false flakes on heading visibility
-  expect: { timeout: 10000 },
+  // AIDEV-NOTE: Staging can be slow — all timeouts are set conservatively to prevent false flakes
+  timeout: 60000,                  // Per-test timeout (default 30s → 60s for multi-step CRUD tests)
+  expect: { timeout: 10000 },      // toBeVisible/toHaveText etc. (default 5s → 10s)
   use: {
     baseURL: baseUrls[ENV],
+    actionTimeout: 15000,          // How long Playwright waits for element to be actionable before click/fill
+    navigationTimeout: 30000,      // How long page.goto() / waitForURL() navigation waits
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
     video: 'on-first-retry',

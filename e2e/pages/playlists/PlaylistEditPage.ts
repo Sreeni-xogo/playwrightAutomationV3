@@ -74,7 +74,7 @@ export class PlaylistEditPage extends BasePage {
     await dialog.getByRole('heading', { level: 4 }).first().locator('../..').getByRole('button', { name: 'Add' }).click();
     // Top-level Add button (dialog header) is enabled once an item is staged
     const confirmBtn = dialog.getByRole('button', { name: 'Add' }).first();
-    await expect(confirmBtn).toBeEnabled({ timeout: 5000 });
+    await expect(confirmBtn).toBeEnabled({ timeout: 10000 });
     await confirmBtn.click();
     await dialog.waitFor({ state: 'hidden', timeout: 10000 });
   }

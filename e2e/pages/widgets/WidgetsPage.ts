@@ -73,7 +73,7 @@ export class WidgetsPage extends BasePage {
   async clickAddNew(): Promise<void> {
     await this.addNewButton.click();
     // AIDEV-NOTE: Add New opens a dropdown menu (not a dialog) — wait for menu to be visible
-    await this.page.getByRole('menu', { name: 'Add New' }).waitFor({ state: 'visible', timeout: 5000 });
+    await this.page.getByRole('menu', { name: 'Add New' }).waitFor({ state: 'visible', timeout: 10000 });
   }
 
   async clickWidget(name: string): Promise<void> {

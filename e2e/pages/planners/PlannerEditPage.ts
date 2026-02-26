@@ -100,7 +100,7 @@ export class PlannerEditPage extends BasePage {
     // AIDEV-NOTE: nth(0) = top "Add" confirm button, nth(1) = first playlist's "Add" button
     await dialog.getByRole('button', { name: 'Add' }).nth(1).click();
     const confirmAdd = dialog.getByRole('button', { name: 'Add' }).first();
-    await expect(confirmAdd).toBeEnabled({ timeout: 5000 });
+    await expect(confirmAdd).toBeEnabled({ timeout: 10000 });
     await confirmAdd.click();
     await dialog.waitFor({ state: 'hidden', timeout: 10000 });
   }
