@@ -46,24 +46,30 @@ export class PlannersPage extends BasePage {
     return this.page.getByRole('heading', { name, level: 5 }).locator('../../../..');
   }
 
-  // AIDEV-NOTE: Returns the clickable link for a planner item by heading name
+  // AIDEV-NOTE: Planner card structure (same pattern as players):
+  //   tile wrapper: div.flex.min-w-0.flex-col.gap-2
+  //   link: a[href] inside div.card (wraps card image) — NOT absolute overlay
+  //   h5 is in div.card-footer > div.group > div.pointer-events-none
+  //   Traversal from h5: 4 levels up = tile wrapper, then div.card > a to get the link
   getPlannerLink(name: string): Locator {
-    return this.page.getByRole('heading', { name, level: 5 }).locator('../../..').getByRole('link');
+    return this.page.getByRole('heading', { name, level: 5 }).locator('../../../..').locator('div.card a');
   }
 
-  // AIDEV-NOTE: Each card has an options/action button (unlabelled) beside the heading
+  // AIDEV-NOTE: Delete button is in div.card-footer (3 levels up from h5) — outside div.group sibling
   getOptionsButtonForPlanner(name: string): Locator {
-    return this.page.getByRole('heading', { name, level: 5 }).locator('../..').getByRole('button');
+    return this.page.getByRole('heading', { name, level: 5 }).locator('../../..').getByRole('button');
   }
 
   async clickAddNew(): Promise<void> {
     await this.addNewLink.click();
-    await this.waitForLoad();
+    // AIDEV-NOTE: Add New is a link navigating to /en/planners/add — caller waits for heading/URL
+    await this.page.waitForURL('**/en/planners/add', { timeout: 10000 });
   }
 
   async clickPlanner(name: string): Promise<void> {
     await this.getPlannerLink(name).click();
-    await this.waitForLoad();
+    // AIDEV-NOTE: SPA nav to planner detail page (PATTERN-002)
+    await this.page.waitForURL((url) => url.pathname.includes('/en/planners/') && !url.pathname.endsWith('/add'), { timeout: 10000 });
   }
 
   async clickSortButton(): Promise<void> {

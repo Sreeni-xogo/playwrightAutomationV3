@@ -69,6 +69,8 @@ export class PlannerEditPage extends BasePage {
   }
 
   async setPlannerName(name: string): Promise<void> {
+    // AIDEV-NOTE: networkidle required before fill() — Vue v-model not updated otherwise (PATTERN-001)
+    await this.page.waitForLoadState('networkidle');
     await this.plannerNameInput.clear();
     await this.plannerNameInput.fill(name);
   }
@@ -83,6 +85,24 @@ export class PlannerEditPage extends BasePage {
 
   async toggleSelectAllDays(): Promise<void> {
     await this.selectAllDaysCheckbox.click();
+  }
+
+  // AIDEV-NOTE: PATTERN-011 — Save button is disabled until at least one playlist is added.
+  // Dialog: "Manage Playlists" opens an "Add Playlists" dialog.
+  // Each playlist row has an "Add" button; the top "Add" button confirms the selection.
+  // nth(1) skips the top "Add" confirm button and clicks the first playlist's "Add".
+  // Then click first() (the top "Add") to confirm and close the dialog.
+  async addOnePlaylistFromDialog(): Promise<void> {
+    await this.managePlaylists.click();
+    const dialog = this.page.getByRole('dialog');
+    await dialog.waitFor({ state: 'visible', timeout: 10000 });
+    await this.page.waitForLoadState('networkidle');
+    // AIDEV-NOTE: nth(0) = top "Add" confirm button, nth(1) = first playlist's "Add" button
+    await dialog.getByRole('button', { name: 'Add' }).nth(1).click();
+    const confirmAdd = dialog.getByRole('button', { name: 'Add' }).first();
+    await expect(confirmAdd).toBeEnabled({ timeout: 5000 });
+    await confirmAdd.click();
+    await dialog.waitFor({ state: 'hidden', timeout: 10000 });
   }
 
   // AIDEV-NOTE: Clicks the checkbox for a specific calendar date cell (by visible day number text)

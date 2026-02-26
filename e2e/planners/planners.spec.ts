@@ -2,6 +2,9 @@ import { test, expect } from '@playwright/test';
 import { PlannersPage } from '../pages/planners/PlannersPage';
 import { PlannerEditPage } from '../pages/planners/PlannerEditPage';
 
+// AIDEV-NOTE: Requires authenticated session — staging-setup saves state, consumed here
+test.use({ storageState: '.auth/staging-state.json' });
+
 const PLANNER_NAME = `AutoTest Planner ${Date.now()}`;
 const PLANNER_UPDATED_NAME = `AutoTest Planner Updated ${Date.now()}`;
 
@@ -34,13 +37,18 @@ test.describe('Planners — list page', () => {
 // Planners — CRUD
 // ---------------------------------------------------------------------------
 
-test.describe('Planners — CRUD', () => {
+// AIDEV-NOTE: Serial required — CRUD tests share PLANNER_NAME/PLANNER_UPDATED_NAME and depend on prior test state
+test.describe.serial('Planners — CRUD', () => {
   test('create: should create a new planner', async ({ page }) => {
     const plannerEditPage = new PlannerEditPage(page);
     await plannerEditPage.gotoAddNew();
     await plannerEditPage.verifyOnAddNewPage();
     await plannerEditPage.setPlannerName(PLANNER_NAME);
+    // AIDEV-NOTE: PATTERN-011 — Save disabled until a playlist is assigned; add one first
+    await plannerEditPage.addOnePlaylistFromDialog();
     await plannerEditPage.save();
+    // AIDEV-NOTE: Save navigates to edit page at /en/planners/:id (PATTERN-002)
+    await page.waitForURL((url) => url.pathname.includes('/en/planners/') && !url.pathname.endsWith('/add'), { timeout: 10000 });
     expect(page.url()).toContain('/en/planners');
   });
 
@@ -81,16 +89,13 @@ test.describe('Planners — CRUD', () => {
   test('delete: should delete the planner', async ({ page }) => {
     const plannersPage = new PlannersPage(page);
     await plannersPage.goto();
+    await page.waitForLoadState('networkidle');
     const optionsBtn = plannersPage.getOptionsButtonForPlanner(PLANNER_UPDATED_NAME);
     await optionsBtn.click();
-    const deleteOption = page.getByRole('menuitem', { name: 'Delete' }).or(
-      page.getByRole('button', { name: 'Delete' })
-    );
-    await deleteOption.click();
-    const confirmButton = page.getByRole('button', { name: 'Delete' }).last();
-    if (await confirmButton.isVisible()) {
-      await confirmButton.click();
-    }
+    // AIDEV-NOTE: Trash icon opens a dialog with "Are you sure?" — scope Delete button to dialog to avoid matching other trash buttons
+    const dialog = page.getByRole('dialog');
+    await dialog.waitFor({ state: 'visible', timeout: 10000 });
+    await dialog.getByRole('button', { name: 'Delete' }).click();
     await expect(page.getByRole('heading', { name: PLANNER_UPDATED_NAME, level: 5 })).not.toBeVisible({ timeout: 10000 });
   });
 });
