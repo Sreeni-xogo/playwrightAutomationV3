@@ -1,6 +1,9 @@
 import { test, expect } from '@playwright/test';
 import { BillingPage } from '../pages/settings/BillingPage';
 
+// AIDEV-NOTE: Requires authenticated session — staging-setup saves state, consumed here
+test.use({ storageState: '.auth/staging-state.json' });
+
 // AIDEV-NOTE: Billing tests are UI verification only — no card updates or invoice downloads are performed
 
 test.describe('Billing — Payment & Billing page (UI only)', () => {
@@ -46,9 +49,8 @@ test.describe('Billing — Payment & Billing page (UI only)', () => {
     const billingPage = new BillingPage(page);
     await billingPage.goto();
     await billingPage.clickUpdateBilling();
-    // Expect a modal, dialog, or redirect to a billing update flow
-    await expect(
-      page.getByRole('dialog').or(page.getByRole('heading', { name: 'Update Billing' }))
-    ).toBeVisible({ timeout: 8000 });
+    // AIDEV-NOTE: Update Billing navigates to Stripe checkout (external payment page, not inline dialog)
+    await page.waitForURL((url) => url.hostname.includes('stripe'), { timeout: 10000 });
+    expect(page.url()).toContain('stripe');
   });
 });

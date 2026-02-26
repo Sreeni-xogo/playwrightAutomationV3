@@ -71,16 +71,20 @@ export class ProfilePage extends BasePage {
   }
 
   async fillFirstName(value: string): Promise<void> {
+    // AIDEV-NOTE: PATTERN-001 — Vue v-model requires networkidle before fill()
+    await this.page.waitForLoadState('networkidle');
     await this.firstNameInput.clear();
     await this.firstNameInput.fill(value);
   }
 
   async fillLastName(value: string): Promise<void> {
+    await this.page.waitForLoadState('networkidle');
     await this.lastNameInput.clear();
     await this.lastNameInput.fill(value);
   }
 
   async fillTitle(value: string): Promise<void> {
+    await this.page.waitForLoadState('networkidle');
     await this.titleInput.clear();
     await this.titleInput.fill(value);
   }

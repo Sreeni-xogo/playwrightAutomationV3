@@ -13,12 +13,14 @@ export class ServicesPage extends BasePage {
   constructor(page: Page) {
     super(page);
     this.heading = page.getByRole('heading', { name: 'Services', level: 1 });
-    this.refreshButton = page.locator('button').first();
+    // AIDEV-NOTE: Refresh button is unlabeled — sits as sibling to heading/description in page header section
+    this.refreshButton = page.getByRole('heading', { name: 'Services', level: 1 }).locator('../..').getByRole('button');
     this.mediaProcessorHeading = page.getByRole('heading', { name: 'Media Processor', level: 3 });
     this.screenshotProcessorHeading = page.getByRole('heading', { name: 'Screenshot Processor', level: 3 });
     // AIDEV-NOTE: Status text is sibling to heading — "Healthy & Ready" or error state
-    this.mediaProcessorStatus = page.locator('div').filter({ hasText: 'Media Processor' }).locator('..').getByText('Healthy & Ready');
-    this.screenshotProcessorStatus = page.locator('div').filter({ hasText: 'Screenshot Processor' }).locator('..').getByText('Healthy & Ready');
+    // AIDEV-NOTE: PATTERN-006 — use .first() to avoid strict mode violation when both processors show same status text
+    this.mediaProcessorStatus = page.locator('div').filter({ hasText: 'Media Processor' }).locator('..').getByText('Healthy & Ready').first();
+    this.screenshotProcessorStatus = page.locator('div').filter({ hasText: 'Screenshot Processor' }).locator('..').getByText('Healthy & Ready').first();
   }
 
   async goto(): Promise<void> {

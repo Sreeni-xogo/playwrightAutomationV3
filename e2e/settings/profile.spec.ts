@@ -1,6 +1,9 @@
 import { test, expect } from '@playwright/test';
 import { ProfilePage } from '../pages/profile/ProfilePage';
 
+// AIDEV-NOTE: Requires authenticated session — staging-setup saves state, consumed here
+test.use({ storageState: '.auth/staging-state.json' });
+
 test.describe('Profile', () => {
   test('should display page heading and both sections', async ({ page }) => {
     const profilePage = new ProfilePage(page);
@@ -59,13 +62,15 @@ test.describe('Profile', () => {
     const profilePage = new ProfilePage(page);
     await profilePage.goto();
     await profilePage.clickChangeEmail();
-    await expect(page.getByRole('dialog').or(page.getByRole('heading', { name: 'Change Email' }))).toBeVisible();
+    // AIDEV-NOTE: PATTERN-006 — .or() causes strict mode violation when dialog+heading both visible; use dialog only
+    await expect(page.getByRole('dialog')).toBeVisible();
   });
 
   test('should open Change Password dialog on button click', async ({ page }) => {
     const profilePage = new ProfilePage(page);
     await profilePage.goto();
     await profilePage.clickChangePassword();
-    await expect(page.getByRole('dialog').or(page.getByRole('heading', { name: 'Change Password' }))).toBeVisible();
+    // AIDEV-NOTE: PATTERN-006 — .or() causes strict mode violation when dialog+heading both visible; use dialog only
+    await expect(page.getByRole('dialog')).toBeVisible();
   });
 });

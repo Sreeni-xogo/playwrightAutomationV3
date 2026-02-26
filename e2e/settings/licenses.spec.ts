@@ -2,6 +2,9 @@ import { test, expect } from '@playwright/test';
 import { LicensesPage } from '../pages/settings/LicensesPage';
 import { BillingPlansPage } from '../pages/settings/BillingPlansPage';
 
+// AIDEV-NOTE: Requires authenticated session — staging-setup saves state, consumed here
+test.use({ storageState: '.auth/staging-state.json' });
+
 test.describe('Licenses', () => {
   test('should display page heading and table', async ({ page }) => {
     const licensesPage = new LicensesPage(page);
