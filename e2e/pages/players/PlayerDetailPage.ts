@@ -37,11 +37,15 @@ export class PlayerDetailPage extends BasePage {
     this.firmwareVersionCell = page.getByRole('cell', { name: 'Firmware version:' });
     this.osVersionCell = page.getByRole('cell', { name: 'OS Version:' });
     this.lastOnlineCell = page.getByRole('cell', { name: 'Last online on:' });
-    // AIDEV-NOTE: Each dropdown opens a popup picker — the button text shows current selected value
-    this.timezoneDropdown = page.getByText('Timezone').locator('..').getByRole('button', { name: 'Show popup' });
-    this.licenseDropdown = page.getByText('License').locator('..').getByRole('button', { name: 'Show popup' });
-    this.associatedPlaylistDropdown = page.getByText('Associated Playlist').locator('..').getByRole('button', { name: 'Show popup' });
-    this.displayOrientationDropdown = page.getByText('Display Orientation').locator('..').getByRole('button', { name: 'Show popup' });
+    // AIDEV-NOTE: Dropdown buttons have aria-label="Show popup" which overrides <label for> association.
+    // getByLabel('Timezone') resolves to 0 — the button's accessible name is "Show popup", not the label text.
+    // Fix: scope via [data-slot="root"] filter — each dropdown row uses this as root wrapper.
+    // Structure: [data-slot="root"] > [...label...] + [div.relative > button[aria-label="Show popup"]]
+    // Associated Playlist label wraps a <span> + <a> — filter still works via hasText substring match.
+    this.timezoneDropdown = page.locator('[data-slot="root"]').filter({ has: page.locator('label', { hasText: 'Timezone' }) }).locator('button[aria-label="Show popup"]');
+    this.licenseDropdown = page.locator('[data-slot="root"]').filter({ has: page.locator('label', { hasText: 'License' }) }).locator('button[aria-label="Show popup"]');
+    this.associatedPlaylistDropdown = page.locator('[data-slot="root"]').filter({ has: page.locator('label', { hasText: 'Associated Playlist' }) }).locator('button[aria-label="Show popup"]');
+    this.displayOrientationDropdown = page.locator('[data-slot="root"]').filter({ has: page.locator('label', { hasText: 'Display Orientation' }) }).locator('button[aria-label="Show popup"]');
     this.viewPlaylistLink = page.getByRole('link', { name: 'View playlist' });
   }
 
@@ -52,7 +56,8 @@ export class PlayerDetailPage extends BasePage {
 
   async goBack(): Promise<void> {
     await this.goBackButton.click();
-    await this.waitForLoad();
+    // AIDEV-NOTE: SPA nav back to players list (PATTERN-002) — waitForURL polls until arrival
+    await this.page.waitForURL((url) => url.pathname.includes('/en/players') && !url.pathname.includes('/en/players/'), { timeout: 10000 });
   }
 
   async setPlayerName(name: string): Promise<void> {

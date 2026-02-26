@@ -2,6 +2,9 @@ import { test, expect } from '@playwright/test';
 import { PlayersPage } from '../pages/players/PlayersPage';
 import { PlayerDetailPage } from '../pages/players/PlayerDetailPage';
 
+// AIDEV-NOTE: Requires authenticated session — staging-setup saves state, consumed here
+test.use({ storageState: '.auth/staging-state.json' });
+
 // ---------------------------------------------------------------------------
 // Players — List Page (UI only, no player creation)
 // ---------------------------------------------------------------------------
@@ -63,12 +66,8 @@ test.describe('Players — Add New page (UI only)', () => {
     const playersPage = new PlayersPage(page);
     await playersPage.goto();
     await playersPage.clickAddNew();
-    // Add New button opens a dialog, modal, or navigates to an add page
-    await expect(
-      page.getByRole('heading', { name: 'Add New' }).or(
-        page.getByRole('dialog')
-      )
-    ).toBeVisible({ timeout: 8000 });
+    // AIDEV-NOTE: Add New navigates to Create Player full page at /en/players/add (not a dialog)
+    await expect(page.getByRole('heading', { level: 1 }).filter({ hasText: 'Player' })).toBeVisible({ timeout: 8000 });
   });
 });
 
@@ -81,16 +80,18 @@ test.describe('Players — edit page (UI only)', () => {
     const playersPage = new PlayersPage(page);
     const playerDetailPage = new PlayerDetailPage(page);
     await playersPage.goto();
-    // AIDEV-NOTE: Click first player card link to open its edit page
-    const firstPlayerLink = page.getByRole('link').filter({ hasText: '' }).nth(2);
+    // AIDEV-NOTE: networkidle ensures player cards (API-fetched) are rendered before count check
+    await page.waitForLoadState('networkidle');
     const playerCards = page.getByRole('heading', { level: 5 });
     const count = await playerCards.count();
     if (count === 0) {
       test.skip();
       return;
     }
-    // Navigate via the first player card link
-    await page.getByRole('heading', { level: 5 }).first().locator('../../..').getByRole('link').click();
+    // AIDEV-NOTE: Player card link — .tile > a.card (PATTERN-010: link is sibling to card-footer)
+    // AIDEV-NOTE: Player card link is a.absolute inside div.card, sibling of div.card-footer with h5
+    await page.getByRole('heading', { level: 5 }).first().locator('../../../..').locator('div.card a').click();
+    await page.waitForURL((url) => url.pathname.includes('/en/players/'), { timeout: 10000 });
     await playerDetailPage.verifyOnEditPage();
     await playerDetailPage.verifySaveButtonVisible();
     await playerDetailPage.verifyAdvancedConfigButtonVisible();
@@ -100,12 +101,14 @@ test.describe('Players — edit page (UI only)', () => {
     const playersPage = new PlayersPage(page);
     const playerDetailPage = new PlayerDetailPage(page);
     await playersPage.goto();
-    const playerCards = page.getByRole('heading', { level: 5 });
-    if (await playerCards.count() === 0) {
+    await page.waitForLoadState('networkidle');
+    if (await page.getByRole('heading', { level: 5 }).count() === 0) {
       test.skip();
       return;
     }
-    await page.getByRole('heading', { level: 5 }).first().locator('../../..').getByRole('link').click();
+    // AIDEV-NOTE: Player card link is a.absolute inside div.card, sibling of div.card-footer with h5
+    await page.getByRole('heading', { level: 5 }).first().locator('../../../..').locator('div.card a').click();
+    await page.waitForURL((url) => url.pathname.includes('/en/players/'), { timeout: 10000 });
     await playerDetailPage.verifyFirmwareVersionVisible();
     await playerDetailPage.verifyOsVersionVisible();
   });
@@ -114,11 +117,14 @@ test.describe('Players — edit page (UI only)', () => {
     const playersPage = new PlayersPage(page);
     const playerDetailPage = new PlayerDetailPage(page);
     await playersPage.goto();
+    await page.waitForLoadState('networkidle');
     if (await page.getByRole('heading', { level: 5 }).count() === 0) {
       test.skip();
       return;
     }
-    await page.getByRole('heading', { level: 5 }).first().locator('../../..').getByRole('link').click();
+    // AIDEV-NOTE: Player card link is a.absolute inside div.card, sibling of div.card-footer with h5
+    await page.getByRole('heading', { level: 5 }).first().locator('../../../..').locator('div.card a').click();
+    await page.waitForURL((url) => url.pathname.includes('/en/players/'), { timeout: 10000 });
     await expect(playerDetailPage.timezoneDropdown).toBeVisible();
     await expect(playerDetailPage.licenseDropdown).toBeVisible();
     await expect(playerDetailPage.associatedPlaylistDropdown).toBeVisible();
@@ -129,12 +135,17 @@ test.describe('Players — edit page (UI only)', () => {
     const playersPage = new PlayersPage(page);
     const playerDetailPage = new PlayerDetailPage(page);
     await playersPage.goto();
+    await page.waitForLoadState('networkidle');
     if (await page.getByRole('heading', { level: 5 }).count() === 0) {
       test.skip();
       return;
     }
-    await page.getByRole('heading', { level: 5 }).first().locator('../../..').getByRole('link').click();
+    // AIDEV-NOTE: Player card link is a.absolute inside div.card, sibling of div.card-footer with h5
+    await page.getByRole('heading', { level: 5 }).first().locator('../../../..').locator('div.card a').click();
+    await page.waitForURL((url) => url.pathname.includes('/en/players/'), { timeout: 10000 });
     await playerDetailPage.goBack();
+    // AIDEV-NOTE: goBack() already awaits waitForURL — just verify final URL (PATTERN-002)
     expect(page.url()).toContain('/en/players');
+    expect(page.url()).not.toContain('/en/players/');
   });
 });

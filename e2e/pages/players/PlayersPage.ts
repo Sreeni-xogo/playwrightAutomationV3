@@ -42,19 +42,28 @@ export class PlayersPage extends BasePage {
     return this.page.getByRole('heading', { name, level: 5 }).locator('../../../..');
   }
 
-  // AIDEV-NOTE: Returns the clickable link for a player card — navigates to /en/players/:id
+  // AIDEV-NOTE: Player card structure differs from playlists:
+  //   tile wrapper: div.flex.min-w-0.flex-col.gap-2 (no ".tile" class)
+  //   link: a.absolute.inset-0.z-10 inside div.card.relative (invisible overlay)
+  //   h5 is in div.card-footer — SIBLING of div.card, NOT inside the link
+  //   Traversal from h5: 4 levels up = tile wrapper, then div.card > a to get the link
   getPlayerLink(name: string): Locator {
-    return this.page.getByRole('heading', { name, level: 5 }).locator('../../..').getByRole('link');
+    return this.page.locator('h5', { hasText: name }).locator('../../../..').locator('div.card a');
   }
 
   async clickAddNew(): Promise<void> {
     await this.addNewButton.click();
-    await this.waitForLoad();
+    // AIDEV-NOTE: Add New navigates to Create Player page — no URL wait needed here,
+    // caller verifies the destination heading (waitForURL interferes with SPA navigation timing)
   }
 
   async clickPlayer(name: string): Promise<void> {
     await this.getPlayerLink(name).click();
-    await this.waitForLoad();
+    // AIDEV-NOTE: SPA nav to player detail page (PATTERN-002)
+    await this.page.waitForURL(
+      (url) => url.pathname.includes('/en/players/') && !url.pathname.endsWith('/add'),
+      { timeout: 10000 }
+    );
   }
 
   async clickFilter(): Promise<void> {
