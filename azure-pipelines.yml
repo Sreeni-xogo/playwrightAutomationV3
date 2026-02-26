@@ -1,0 +1,49 @@
+trigger:
+  - main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+  - task: NodeTool@0
+    inputs:
+      versionSpec: '18.x'
+    displayName: 'Install Node.js'
+
+  - script: npm ci
+    displayName: 'Install dependencies'
+
+  - script: npx playwright install chromium --with-deps
+    displayName: 'Install Chromium browser'
+
+  - script: npx playwright test --project=staging
+    displayName: 'Run Playwright E2E tests (staging, Chrome headless)'
+    env:
+      CI: 'true'
+      STAGING_USER: $(STAGING_USER)
+      STAGING_PASSWORD: $(STAGING_PASSWORD)
+    # AIDEV-NOTE: continueOnError so reports are always published even when tests fail
+    continueOnError: true
+
+  # AIDEV-NOTE: Publishes JUnit XML → enables Tests tab + Test Analytics in Azure DevOps
+  # Navigation: pipeline run → Tests tab (per-run detail)
+  # Navigation: pipeline → Analytics tab (trend history across all runs)
+  - task: PublishTestResults@2
+    condition: always()
+    displayName: 'Publish JUnit results → Tests tab + Analytics'
+    inputs:
+      testResultsFormat: 'JUnit'
+      testResultsFiles: 'results/results.xml'
+      mergeTestResults: true
+      testRunTitle: 'Playwright E2E — Staging — Chrome'
+      failTaskOnFailedTests: true
+
+  # AIDEV-NOTE: Publishes the full Playwright HTML report as a downloadable pipeline artifact
+  # Download from: pipeline run → Artifacts tab → playwright-report → index.html
+  - task: PublishPipelineArtifact@1
+    condition: always()
+    displayName: 'Publish Playwright HTML report artifact'
+    inputs:
+      targetPath: 'playwright-report'
+      artifact: 'playwright-report'
+      publishLocation: 'pipeline'

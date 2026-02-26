@@ -23,7 +23,11 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
   workers: process.env.CI ? 1 : undefined,
-  reporter: [['html', { open: 'never' }]],
+  reporter: [
+    ['html', { open: 'never' }],
+    // AIDEV-NOTE: JUnit feeds Azure DevOps Tests tab + Test Analytics trending dashboard
+    ['junit', { outputFile: 'results/results.xml' }],
+  ],
   use: {
     baseURL: baseUrls[ENV],
     trace: 'on-first-retry',
