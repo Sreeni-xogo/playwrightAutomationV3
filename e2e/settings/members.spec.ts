@@ -51,7 +51,10 @@ test.describe.serial('Members', () => {
     await membersPage.verifyInviteDialogClosed();
   });
 
-  test('should send an invite and verify it appears in Sent Invites table', async ({ page }) => {
+  // AIDEV-NOTE: Send + revoke combined in one test — avoids fresh page reload between steps.
+  // After a reload, the table loads from API oldest-first + paginated, pushing the new invite
+  // to a later page. Live DOM update after send always shows the invite without a reload.
+  test('should send an invite, verify it appears, then revoke it', async ({ page }) => {
     const membersPage = new MembersPage(page);
     await membersPage.goto();
     await membersPage.openInviteDialog();
@@ -59,15 +62,9 @@ test.describe.serial('Members', () => {
     await membersPage.submitInvite();
     // Dialog should close after sending
     await membersPage.verifyInviteDialogClosed();
-    // Invited email should appear in the Sent Invites table
+    // Invite appears immediately via live DOM update (no reload — avoids pagination issue)
     await expect(membersPage.sentInvitesTable.getByText(INVITE_EMAIL)).toBeVisible({ timeout: 10000 });
-  });
-
-  test('should revoke the sent invite', async ({ page }) => {
-    const membersPage = new MembersPage(page);
-    await membersPage.goto();
-    // Confirm the invite is still in the table then revoke it
-    await expect(membersPage.sentInvitesTable.getByText(INVITE_EMAIL)).toBeVisible({ timeout: 5000 });
+    // Revoke in the same page context while invite is still visible
     await membersPage.revokeInviteForEmail(INVITE_EMAIL);
     await expect(membersPage.sentInvitesTable.getByText(INVITE_EMAIL)).not.toBeVisible({ timeout: 10000 });
   });

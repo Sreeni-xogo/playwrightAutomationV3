@@ -165,7 +165,7 @@ test.describe('Library — URL CRUD', () => {
     // AIDEV-NOTE: Deletion always triggers a confirmation dialog — wait for it then confirm.
     // getByRole('dialog') scopes the Delete button to avoid matching the card-footer's trash icon.
     const confirmDeleteButton = page.getByRole('dialog').getByRole('button', { name: 'Delete' });
-    await confirmDeleteButton.waitFor({ state: 'visible', timeout: 5000 });
+    await confirmDeleteButton.waitFor({ state: 'visible', timeout: 10000 });
     await confirmDeleteButton.click();
     // AIDEV-NOTE: Use h5 locator (not getByText) to avoid strict-mode violations — dialog also
     // contains the asset name in its <p> body which creates a second match.

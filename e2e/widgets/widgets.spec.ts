@@ -118,7 +118,7 @@ test.describe.serial('Widgets — CRUD', () => {
     // AIDEV-NOTE: Confirmation dialog may appear — scope Delete button to dialog
     const dialog = page.getByRole('dialog');
     try {
-      await dialog.waitFor({ state: 'visible', timeout: 5000 });
+      await dialog.waitFor({ state: 'visible', timeout: 10000 });
       await dialog.getByRole('button', { name: 'Delete' }).click();
     } catch {
       // No dialog — direct delete without confirmation

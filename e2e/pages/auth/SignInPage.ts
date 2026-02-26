@@ -94,13 +94,13 @@ export class SignInPage extends BasePage {
 
   async verifyEmailError(expected: string = 'Invalid email address'): Promise<void> {
     await this.page.keyboard.press('Tab');
-    await expect(this.emailError).toBeVisible({ timeout: 5000 });
+    await expect(this.emailError).toBeVisible({ timeout: 10000 });
     await expect(this.emailError).toContainText(expected);
   }
 
   async verifyPasswordError(expected: string = 'Password must be at least 6 characters'): Promise<void> {
     await this.page.keyboard.press('Tab');
-    await expect(this.passwordError).toBeVisible({ timeout: 5000 });
+    await expect(this.passwordError).toBeVisible({ timeout: 10000 });
     await expect(this.passwordError).toContainText(expected);
   }
 

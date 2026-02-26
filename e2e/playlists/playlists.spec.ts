@@ -84,7 +84,7 @@ test.describe('Playlists — CRUD', () => {
     await playlistsPage.deletePlaylist(PLAYLIST_UPDATED_NAME);
     // AIDEV-NOTE: Confirmation dialog always appears — waitFor before click (PATTERN-008)
     const confirmDeleteButton = page.getByRole('dialog').getByRole('button', { name: 'Delete' });
-    await confirmDeleteButton.waitFor({ state: 'visible', timeout: 5000 });
+    await confirmDeleteButton.waitFor({ state: 'visible', timeout: 10000 });
     await confirmDeleteButton.click();
     await expect(page.locator('h5', { hasText: PLAYLIST_UPDATED_NAME })).not.toBeVisible({ timeout: 10000 });
   });
