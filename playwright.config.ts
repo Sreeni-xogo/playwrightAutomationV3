@@ -28,6 +28,8 @@ export default defineConfig({
     // AIDEV-NOTE: JUnit feeds Azure DevOps Tests tab + Test Analytics trending dashboard
     ['junit', { outputFile: 'results/results.xml' }],
   ],
+  // AIDEV-NOTE: Global expect timeout — staging can be slow; 10s prevents false flakes on heading visibility
+  expect: { timeout: 10000 },
   use: {
     baseURL: baseUrls[ENV],
     trace: 'on-first-retry',
