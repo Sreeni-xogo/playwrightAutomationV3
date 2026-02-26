@@ -1,6 +1,16 @@
 import { test, expect } from '@playwright/test';
+import { fileURLToPath } from 'url';
+import path from 'path';
 import { OverlaysPage } from '../pages/overlays/OverlaysPage';
 import { OverlayEditPage } from '../pages/overlays/OverlayEditPage';
+
+// AIDEV-NOTE: PATTERN-013 — overlay save requires a background image or web surface
+// A minimal 1x1 PNG is used as the canvas background to satisfy the validation
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const TEST_IMAGE = path.join(__dirname, '../fixtures/test-image.png');
+
+// AIDEV-NOTE: Requires authenticated session — staging-setup saves state, consumed here
+test.use({ storageState: '.auth/staging-state.json' });
 
 const OVERLAY_NAME = `AutoTest Overlay ${Date.now()}`;
 const OVERLAY_UPDATED_NAME = `AutoTest Overlay Updated ${Date.now()}`;
@@ -40,7 +50,8 @@ test.describe('Overlays — list page', () => {
 // Overlays — CRUD
 // ---------------------------------------------------------------------------
 
-test.describe('Overlays — CRUD', () => {
+// AIDEV-NOTE: Serial required — CRUD tests share OVERLAY_NAME/OVERLAY_UPDATED_NAME and depend on prior test state
+test.describe.serial('Overlays — CRUD', () => {
   test('create: should display Add New overlay page elements', async ({ page }) => {
     const overlayEditPage = new OverlayEditPage(page);
     await overlayEditPage.gotoAddNew();
@@ -55,7 +66,12 @@ test.describe('Overlays — CRUD', () => {
     await overlayEditPage.gotoAddNew();
     await overlayEditPage.setOverlayName(OVERLAY_NAME);
     await overlayEditPage.clickFullScreenTemplate();
-    await overlayEditPage.save();
+    // AIDEV-NOTE: PATTERN-013 — upload a background image to satisfy canvas validation before saving
+    await overlayEditPage.uploadCanvasBackground(TEST_IMAGE);
+    // AIDEV-NOTE: Template zone has no URL — "Web Surfaces Missing URLs" dialog may appear; confirm to proceed
+    await overlayEditPage.saveAndConfirm();
+    // AIDEV-NOTE: Save navigates to edit page at /en/overlays/:id (PATTERN-002)
+    await page.waitForURL((url) => url.pathname.includes('/en/overlays/') && !url.pathname.endsWith('/add'), { timeout: 15000 });
     expect(page.url()).toContain('/en/overlays');
   });
 
@@ -75,16 +91,13 @@ test.describe('Overlays — CRUD', () => {
   test('delete: should delete the overlay', async ({ page }) => {
     const overlaysPage = new OverlaysPage(page);
     await overlaysPage.goto();
+    await page.waitForLoadState('networkidle');
     const optionsBtn = overlaysPage.getOptionsButtonForOverlay(OVERLAY_UPDATED_NAME);
     await optionsBtn.click();
-    const deleteOption = page.getByRole('menuitem', { name: 'Delete' }).or(
-      page.getByRole('button', { name: 'Delete' })
-    );
-    await deleteOption.click();
-    const confirmButton = page.getByRole('button', { name: 'Delete' }).last();
-    if (await confirmButton.isVisible()) {
-      await confirmButton.click();
-    }
+    // AIDEV-NOTE: Trash icon opens confirmation dialog — scope Delete to dialog to avoid matching other buttons
+    const dialog = page.getByRole('dialog');
+    await dialog.waitFor({ state: 'visible', timeout: 10000 });
+    await dialog.getByRole('button', { name: 'Delete' }).click();
     await expect(page.getByRole('heading', { name: OVERLAY_UPDATED_NAME, level: 5 })).not.toBeVisible({ timeout: 10000 });
   });
 });

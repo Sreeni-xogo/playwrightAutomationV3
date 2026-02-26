@@ -54,7 +54,8 @@ export class UploadPage extends BasePage {
   // Navigate back to Library using the Go back button
   async goBack(): Promise<void> {
     await this.goBackButton.click();
-    await this.waitForLoad();
+    // AIDEV-NOTE: SPA nav — waitForLoad fires before route change; waitForURL polls until arrival
+    await this.page.waitForURL((url) => url.pathname.includes('/en/library'), { timeout: 10000 });
   }
 
   // --- Upload actions ---

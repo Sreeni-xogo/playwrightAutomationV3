@@ -27,11 +27,16 @@ export class OverlayEditPage extends BasePage {
   readonly showMoreTemplatesButton: Locator;
   // AIDEV-NOTE: Canvas preview area shows aspect ratio info e.g. "Aspect Ratio: 16:9 (Landscape)"
   readonly aspectRatioInfo: Locator;
+  // AIDEV-NOTE: Canvas image/background button — in div.absolute.top-3.right-3 over the canvas container
+  // On create page: only 1 button (background upload). On edit page: 2 buttons (zone edit + delete).
+  // .first() = background upload on create page; zone image button on edit page.
+  readonly canvasImageButton: Locator;
 
   constructor(page: Page) {
     super(page);
     this.pageHeading = page.getByRole('heading', { name: 'Edit Overlay', level: 1 });
-    this.addNewPageHeading = page.getByRole('heading', { name: 'Add New Overlay', level: 1 });
+    // AIDEV-NOTE: Add New page heading is "Create Overlay" (not "Add New Overlay")
+    this.addNewPageHeading = page.getByRole('heading', { name: 'Create Overlay', level: 1 });
     this.goBackButton = page.getByRole('button', { name: 'Go back' });
     this.saveButton = page.getByRole('button', { name: 'Save' });
     this.overlayDetailsSectionHeading = page.getByRole('heading', { name: 'Overlay Details', level: 2 });
@@ -50,6 +55,9 @@ export class OverlayEditPage extends BasePage {
     this.showMoreTemplatesButton = page.getByRole('button', { name: 'Show More' });
     // AIDEV-NOTE: Aspect ratio text is rendered below the canvas preview
     this.aspectRatioInfo = page.getByText('Aspect Ratio:');
+    // AIDEV-NOTE: Canvas action buttons float in div.absolute.top-3.right-3 over the canvas container
+    // Create page: 1 button (background image upload). Edit page: 2 buttons (zone edit + delete).
+    this.canvasImageButton = page.locator('div.absolute.top-3.right-3').locator('button').first();
   }
 
   async goto(overlayId: string): Promise<void> {
@@ -68,12 +76,27 @@ export class OverlayEditPage extends BasePage {
   }
 
   async setOverlayName(name: string): Promise<void> {
+    // AIDEV-NOTE: networkidle required before fill() — Vue v-model not updated otherwise (PATTERN-001)
+    await this.page.waitForLoadState('networkidle');
     await this.overlayNameInput.clear();
     await this.overlayNameInput.fill(name);
   }
 
   async save(): Promise<void> {
     await this.saveButton.click();
+  }
+
+  // AIDEV-NOTE: When a zone has no URL set, save shows "Web Surfaces Missing URLs" dialog.
+  // Click "Continue Anyway" to proceed — the URL-less zone is dropped, the rest saves normally.
+  async saveAndConfirm(): Promise<void> {
+    await this.saveButton.click();
+    const continueButton = this.page.getByRole('button', { name: 'Continue Anyway' });
+    try {
+      await continueButton.waitFor({ state: 'visible', timeout: 3000 });
+      await continueButton.click();
+    } catch {
+      // No dialog appeared — save proceeded without needing confirmation
+    }
   }
 
   async clickResolutionPicker(): Promise<void> {
@@ -94,6 +117,18 @@ export class OverlayEditPage extends BasePage {
 
   async clickShowMoreTemplates(): Promise<void> {
     await this.showMoreTemplatesButton.click();
+  }
+
+  // AIDEV-NOTE: Overlay save requires at least one web surface or background image (PATTERN-013)
+  // The canvas image button (top-right of canvas) opens a file chooser for uploading a background image.
+  // This satisfies the "must contain at least one web surface or background image" validation.
+  async uploadCanvasBackground(imagePath: string): Promise<void> {
+    const fileChooserPromise = this.page.waitForEvent('filechooser');
+    await this.canvasImageButton.click();
+    const fileChooser = await fileChooserPromise;
+    await fileChooser.setFiles(imagePath);
+    // Wait for canvas to render the uploaded image
+    await this.page.waitForLoadState('networkidle');
   }
 
   async verifyOnEditPage(): Promise<void> {

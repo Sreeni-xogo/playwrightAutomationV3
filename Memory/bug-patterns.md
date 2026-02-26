@@ -339,6 +339,110 @@ getDeleteButtonForPlaylist(name: string): Locator {
 
 ---
 
+## PATTERN-011: Planner save blocked — Save button disabled until playlist assigned
+
+**Symptom:**
+- `save()` click on "Add New Planner" times out — button is `disabled` permanently
+- Typing in planner name does NOT enable Save (unlike PATTERN-009 which is item-count based)
+
+**Root Cause:**
+The Save button for planners requires at least one playlist to be associated. Without a playlist, Vue's reactive `disabled` binding keeps the button in a disabled state regardless of name input.
+
+**Fix:**
+Call `addOnePlaylistFromDialog()` BEFORE `save()` in the create test:
+```typescript
+async addOnePlaylistFromDialog(): Promise<void> {
+  await this.managePlaylists.click();
+  const dialog = this.page.getByRole('dialog');
+  await dialog.waitFor({ state: 'visible', timeout: 10000 });
+  await this.page.waitForLoadState('networkidle');
+  // nth(0) = top "Add" confirm button, nth(1) = first playlist row's "Add"
+  await dialog.getByRole('button', { name: 'Add' }).nth(1).click();
+  const confirmAdd = dialog.getByRole('button', { name: 'Add' }).first();
+  await expect(confirmAdd).toBeEnabled({ timeout: 5000 });
+  await confirmAdd.click();
+  await dialog.waitFor({ state: 'hidden', timeout: 10000 });
+}
+```
+
+**Anti-Patterns:**
+- ❌ `save()` without adding a playlist — button stays `disabled`
+- ❌ Selecting calendar days — does NOT enable Save
+
+---
+
+## PATTERN-012: Player/Planner card link — a inside div.card (NOT absolute overlay)
+
+**Symptom:**
+- `h5.locator('../../..').getByRole('link')` times out
+- `getByRole('heading', level: 5).locator('../../..').getByRole('link')` resolves but no link found (3 levels = card-footer, no link there)
+
+**Root Cause:**
+Player and Planner cards use `div.flex.min-w-0.flex-col.gap-2` as tile wrapper. The link is `<a>` inside `div.card.relative` (wraps the card image) — NOT an absolute overlay. h5 traversal: h5 → pointer-events-none → group → card-footer → tile wrapper = 4 levels.
+
+**Fix:**
+```typescript
+// 4 levels up to tile wrapper, then div.card > a (same for players and planners)
+getPlayerLink(name: string): Locator {
+  return this.page.getByRole('heading', { name, level: 5 }).locator('../../../..').locator('div.card a');
+}
+// Delete button: 3 levels up to card-footer (button is in sibling div.flex, NOT inside div.group)
+getOptionsButtonForPlanner(name: string): Locator {
+  return this.page.getByRole('heading', { name, level: 5 }).locator('../../..').getByRole('button');
+}
+```
+
+**Anti-Patterns:**
+- ❌ `h5.locator('../../..').getByRole('link')` — 3 levels = card-footer, no link
+- ❌ `getByRole('link', { name: playerName })` — link has no accessible name (it wraps only image)
+
+---
+
+## PATTERN-013: Overlay save blocked — canvas must have web surface or background image
+
+**Symptom:**
+- `save()` on Create Overlay page triggers toast: "Cannot save empty overlay. Overlay must contain at least one web surface or background image."
+- URL stays on `/en/overlays/add`; no API call made
+- Clicking a Quick Start Template button (e.g., Full Screen) selects the layout but does NOT add a web surface automatically
+- Clicking Save after template click shows "Web Surfaces Missing URLs" dialog: "1 web surface without a URL will not be saved"
+
+**Root Cause:**
+The overlay canvas requires at least one "web surface" (zone with URL) or a background image before saving. Quick Start Templates create a LAYOUT ZONE in the Konva canvas but the zone has no URL assigned (shown as a broken-image placeholder). There is no URL input in the Create Overlay UI — web surface URLs must be set via API or by configuring an existing zone. The canvas background image upload button (top-right of canvas) can satisfy the "background image" requirement.
+
+**Fix:**
+Upload a small background image BEFORE clicking Save. Also handle the "Web Surfaces Missing URLs" confirmation dialog if a template was clicked:
+```typescript
+// In POM:
+async uploadCanvasBackground(imagePath: string): Promise<void> {
+  // AIDEV-NOTE: Canvas action buttons are in div.absolute.top-3.right-3 over the canvas
+  const fileChooserPromise = this.page.waitForEvent('filechooser');
+  await this.page.locator('div.absolute.top-3.right-3').locator('button').first().click();
+  const fileChooser = await fileChooserPromise;
+  await fileChooser.setFiles(imagePath);
+  await this.page.waitForLoadState('networkidle');
+}
+
+async saveAndConfirm(): Promise<void> {
+  await this.saveButton.click();
+  const continueButton = this.page.getByRole('button', { name: 'Continue Anyway' });
+  try {
+    await continueButton.waitFor({ state: 'visible', timeout: 3000 });
+    await continueButton.click();
+  } catch { /* no dialog */ }
+}
+```
+In test: call `uploadCanvasBackground(TEST_IMAGE)` after template click, then `saveAndConfirm()`.
+
+A minimal 1×1 PNG fixture at `e2e/fixtures/test-image.png` satisfies the upload requirement.
+
+**Anti-Patterns:**
+- ❌ `clickFullScreenTemplate()` then `save()` — zone has no URL, save is blocked
+- ❌ Double-clicking the zone — no URL input opens in the UI
+- ❌ Right-clicking the zone — no context menu
+- ❌ Clicking the canvas center — zone selection only, no property panel
+
+---
+
 ## ANTI-PATTERNS — Never Do These
 
 | Anti-Pattern | Why | Use Instead |
