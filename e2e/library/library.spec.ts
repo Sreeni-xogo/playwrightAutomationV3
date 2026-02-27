@@ -2,8 +2,8 @@ import { test, expect } from '@playwright/test';
 import { LibraryPage } from '../pages/library/LibraryPage';
 import { UploadPage } from '../pages/library/UploadPage';
 
-// AIDEV-NOTE: Requires authenticated session — staging-setup saves state, consumed here
-test.use({ storageState: '.auth/staging-state.json' });
+// AIDEV-NOTE: Requires authenticated session — setup saves .auth/state.json, consumed here
+test.use({ storageState: '.auth/state.json' });
 
 // ---------------------------------------------------------------------------
 // Library — URL CRUD test data

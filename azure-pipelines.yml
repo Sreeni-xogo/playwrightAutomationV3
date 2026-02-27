@@ -16,12 +16,13 @@ steps:
   - script: npx playwright install chromium --with-deps
     displayName: 'Install Chromium browser'
 
-  - script: npx playwright test --project=staging
-    displayName: 'Run Playwright E2E tests (staging, Chrome headless)'
+  - script: npx playwright test
+    displayName: 'Run Playwright E2E tests (Chrome headless)'
     env:
       CI: 'true'
-      STAGING_USER: $(STAGING_USER)
-      STAGING_PASSWORD: $(STAGING_PASSWORD)
+      URL: $(URL)
+      EMAIL: $(EMAIL)
+      PASSWORD: $(PASSWORD)
     # AIDEV-NOTE: continueOnError so reports are always published even when tests fail
     continueOnError: true
 
@@ -35,7 +36,7 @@ steps:
       testResultsFormat: 'JUnit'
       testResultsFiles: 'results/results.xml'
       mergeTestResults: true
-      testRunTitle: 'Playwright E2E — Staging — Chrome'
+      testRunTitle: 'Playwright E2E — Chrome'
       failTaskOnFailedTests: true
 
   # AIDEV-NOTE: Publishes the full Playwright HTML report as a downloadable pipeline artifact

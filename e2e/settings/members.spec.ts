@@ -1,8 +1,8 @@
 import { test, expect } from '@playwright/test';
 import { MembersPage } from '../pages/settings/MembersPage';
 
-// AIDEV-NOTE: Requires authenticated session — staging-setup saves state, consumed here
-test.use({ storageState: '.auth/staging-state.json' });
+// AIDEV-NOTE: Requires authenticated session — setup saves .auth/state.json, consumed here
+test.use({ storageState: '.auth/state.json' });
 
 // AIDEV-NOTE: Test invite email — using a public disposable-style address for staging only
 const INVITE_EMAIL = `xogo-test-invite-${Date.now()}@mailinator.com`;

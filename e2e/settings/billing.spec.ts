@@ -1,8 +1,8 @@
 import { test, expect } from '@playwright/test';
 import { BillingPage } from '../pages/settings/BillingPage';
 
-// AIDEV-NOTE: Requires authenticated session — staging-setup saves state, consumed here
-test.use({ storageState: '.auth/staging-state.json' });
+// AIDEV-NOTE: Requires authenticated session — setup saves .auth/state.json, consumed here
+test.use({ storageState: '.auth/state.json' });
 
 // AIDEV-NOTE: Billing tests are UI verification only — no card updates or invoice downloads are performed
 

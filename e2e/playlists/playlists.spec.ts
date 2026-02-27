@@ -2,8 +2,8 @@ import { test, expect } from '@playwright/test';
 import { PlaylistsPage } from '../pages/playlists/PlaylistsPage';
 import { PlaylistEditPage } from '../pages/playlists/PlaylistEditPage';
 
-// AIDEV-NOTE: Requires authenticated session — staging-setup saves state, consumed here
-test.use({ storageState: '.auth/staging-state.json' });
+// AIDEV-NOTE: Requires authenticated session — setup saves .auth/state.json, consumed here
+test.use({ storageState: '.auth/state.json' });
 
 const PLAYLIST_NAME = `AutoTest Playlist ${Date.now()}`;
 const PLAYLIST_UPDATED_NAME = `AutoTest Playlist Updated ${Date.now()}`;

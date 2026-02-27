@@ -2,8 +2,8 @@ import { test, expect } from '@playwright/test';
 import { PlannersPage } from '../pages/planners/PlannersPage';
 import { PlannerEditPage } from '../pages/planners/PlannerEditPage';
 
-// AIDEV-NOTE: Requires authenticated session — staging-setup saves state, consumed here
-test.use({ storageState: '.auth/staging-state.json' });
+// AIDEV-NOTE: Requires authenticated session — setup saves .auth/state.json, consumed here
+test.use({ storageState: '.auth/state.json' });
 
 const PLANNER_NAME = `AutoTest Planner ${Date.now()}`;
 const PLANNER_UPDATED_NAME = `AutoTest Planner Updated ${Date.now()}`;

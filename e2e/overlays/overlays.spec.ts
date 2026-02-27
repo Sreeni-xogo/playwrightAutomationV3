@@ -9,8 +9,8 @@ import { OverlayEditPage } from '../pages/overlays/OverlayEditPage';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const TEST_IMAGE = path.join(__dirname, '../fixtures/test-image.png');
 
-// AIDEV-NOTE: Requires authenticated session — staging-setup saves state, consumed here
-test.use({ storageState: '.auth/staging-state.json' });
+// AIDEV-NOTE: Requires authenticated session — setup saves .auth/state.json, consumed here
+test.use({ storageState: '.auth/state.json' });
 
 const OVERLAY_NAME = `AutoTest Overlay ${Date.now()}`;
 const OVERLAY_UPDATED_NAME = `AutoTest Overlay Updated ${Date.now()}`;

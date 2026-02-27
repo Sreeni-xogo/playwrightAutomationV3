@@ -1,8 +1,8 @@
 import { test, expect } from '@playwright/test';
 import { ProfilePage } from '../pages/profile/ProfilePage';
 
-// AIDEV-NOTE: Requires authenticated session — staging-setup saves state, consumed here
-test.use({ storageState: '.auth/staging-state.json' });
+// AIDEV-NOTE: Requires authenticated session — setup saves .auth/state.json, consumed here
+test.use({ storageState: '.auth/state.json' });
 
 test.describe('Profile', () => {
   test('should display page heading and both sections', async ({ page }) => {

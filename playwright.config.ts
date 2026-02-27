@@ -1,21 +1,7 @@
 import { defineConfig, devices } from '@playwright/test';
 import dotenv from 'dotenv';
-import path from 'path';
-import { fileURLToPath } from 'url';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-dotenv.config({ path: path.resolve(__dirname, '.env') });
-
-const ENV = process.env.TEST_ENV || 'staging';
-
-const baseUrls: Record<string, string> = {
-  local: process.env.LOCAL_URL || 'http://localhost:5173',
-  staging: process.env.STAGING_URL || 'https://manager-staging.xogo.io',
-  'pre-release': process.env.PRE_RELEASE_URL || 'https://manager-node24-slots-manager-node24-preview-gwdaereqgqhtgkhp.westus-01.azurewebsites.net',
-  production: process.env.PROD_URL || 'https://manager.xogo.io',
-};
+dotenv.config();
 
 export default defineConfig({
   testDir: './e2e',
@@ -28,11 +14,11 @@ export default defineConfig({
     // AIDEV-NOTE: JUnit feeds Azure DevOps Tests tab + Test Analytics trending dashboard
     ['junit', { outputFile: 'results/results.xml' }],
   ],
-  // AIDEV-NOTE: Staging can be slow — all timeouts are set conservatively to prevent false flakes
+  // AIDEV-NOTE: Timeouts set conservatively — target env can be slow (staging/pre-release/production)
   timeout: 60000,                  // Per-test timeout (default 30s → 60s for multi-step CRUD tests)
   expect: { timeout: 10000 },      // toBeVisible/toHaveText etc. (default 5s → 10s)
   use: {
-    baseURL: baseUrls[ENV],
+    baseURL: process.env.URL,
     actionTimeout: 15000,          // How long Playwright waits for element to be actionable before click/fill
     navigationTimeout: 30000,      // How long page.goto() / waitForURL() navigation waits
     trace: 'on-first-retry',
@@ -40,45 +26,18 @@ export default defineConfig({
     video: 'on-first-retry',
   },
   projects: [
-    // AIDEV-NOTE: staging-setup logs in once and saves .auth/staging-state.json.
-    // Authenticated spec files opt in via test.use({ storageState: '.auth/staging-state.json' }).
+    // AIDEV-NOTE: setup logs in once and saves .auth/state.json.
+    // Authenticated spec files opt in via test.use({ storageState: '.auth/state.json' }).
     // Auth spec files do NOT opt in — they run unauthenticated to test the login/signup flows.
     {
-      name: 'staging-setup',
-      testMatch: 'e2e/auth/staging.setup.ts',
-      use: {
-        ...devices['Desktop Chrome'],
-        baseURL: baseUrls['staging'],
-      },
+      name: 'setup',
+      testMatch: 'e2e/auth/auth.setup.ts',
+      use: { ...devices['Desktop Chrome'] },
     },
     {
-      name: 'local',
-      use: {
-        ...devices['Desktop Chrome'],
-        baseURL: baseUrls['local'],
-      },
-    },
-    {
-      name: 'staging',
-      dependencies: ['staging-setup'],
-      use: {
-        ...devices['Desktop Chrome'],
-        baseURL: baseUrls['staging'],
-      },
-    },
-    {
-      name: 'pre-release',
-      use: {
-        ...devices['Desktop Chrome'],
-        baseURL: baseUrls['pre-release'],
-      },
-    },
-    {
-      name: 'production',
-      use: {
-        ...devices['Desktop Chrome'],
-        baseURL: baseUrls['production'],
-      },
+      name: 'chromium',
+      dependencies: ['setup'],
+      use: { ...devices['Desktop Chrome'] },
     },
   ],
 });

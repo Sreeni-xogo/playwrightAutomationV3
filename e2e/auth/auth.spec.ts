@@ -4,8 +4,8 @@ import { SignUpPage } from '../pages/auth/SignUpPage';
 import { ForgotPasswordPage } from '../pages/auth/ForgotPasswordPage';
 
 // AIDEV-NOTE: Credentials sourced from environment variables — set in .env before running
-const EMAIL = process.env['TEST_EMAIL'] ?? '';
-const PASSWORD = process.env['TEST_PASSWORD'] ?? '';
+const EMAIL = process.env['EMAIL'] ?? '';
+const PASSWORD = process.env['PASSWORD'] ?? '';
 
 // ---------------------------------------------------------------------------
 // Sign In

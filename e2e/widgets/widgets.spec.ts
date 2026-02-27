@@ -2,8 +2,8 @@ import { test, expect } from '@playwright/test';
 import { WidgetsPage } from '../pages/widgets/WidgetsPage';
 import { WidgetEditPage } from '../pages/widgets/WidgetEditPage';
 
-// AIDEV-NOTE: Requires authenticated session — staging-setup saves state, consumed here
-test.use({ storageState: '.auth/staging-state.json' });
+// AIDEV-NOTE: Requires authenticated session — setup saves .auth/state.json, consumed here
+test.use({ storageState: '.auth/state.json' });
 
 const WIDGET_NAME = `AutoTest Widget ${Date.now()}`;
 const WIDGET_UPDATED_NAME = `AutoTest Widget Updated ${Date.now()}`;
