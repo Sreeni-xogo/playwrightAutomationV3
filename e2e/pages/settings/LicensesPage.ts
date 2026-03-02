@@ -12,6 +12,8 @@ export class LicensesPage extends BasePage {
   readonly licensesCountHeading: Locator;
   readonly licensesInUseText: Locator;
   readonly buyMoreLink: Locator;
+  // AIDEV-NOTE: Free tier shows "Upgrade to Pro" link in place of "Buy More"
+  readonly freeUpgradeToProLink: Locator;
   readonly balanceHeading: Locator;
   readonly balanceAmount: Locator;
   readonly enterCreditCodeButton: Locator;
@@ -41,6 +43,9 @@ export class LicensesPage extends BasePage {
     this.licensesCountHeading = page.getByRole('heading', { name: 'Licenses', level: 2 });
     this.licensesInUseText = page.getByText('in use');
     this.buyMoreLink = page.getByRole('link', { name: 'Buy More' });
+    // AIDEV-NOTE: Free tier replaces "Buy More" with "Upgrade to Pro" link in the Licenses summary card.
+    // Scoped to the licenses count heading's parent container to avoid matching the sidebar "Upgrade to Pro" link.
+    this.freeUpgradeToProLink = this.licensesCountHeading.locator('..').getByRole('link', { name: 'Upgrade to Pro' });
     this.balanceHeading = page.getByRole('heading', { name: 'Balance', level: 2 });
     this.balanceAmount = page.locator('h2').filter({ hasText: 'Balance' }).locator('..').locator('p').first();
     this.enterCreditCodeButton = page.getByRole('button', { name: 'Enter Credit Code' });
