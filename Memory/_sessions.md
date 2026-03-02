@@ -36,3 +36,6 @@
 - 12:19 | Checkpoint | playwrightAutomationV3 — SignInPage updated: Google/Facebook/Apple SSO buttons added, Microsoft locator name fixed
 - 12:30 | Checkpoint | playwrightAutomationV3 — BRAIN 3.0 compliance audit: Level 2 dissolution completed for all 3 BRAINs, _sessions.md format corrected, Memory/.local/_index.md created
 - 12:30 | Session End | playwrightAutomationV3 — status: Active
+
+## 2026-03-02
+- 12:05 | BRAIN Refine | TierAwareTestGuards — goal: ACCOUNT_TIER env var (free/pro/enterprise) drives conditional assertions across all tier-sensitive specs; replaces hard-coded skips
