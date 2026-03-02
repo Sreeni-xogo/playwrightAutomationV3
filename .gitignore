@@ -52,6 +52,9 @@ logs/
 coverage/
 .nyc_output/
 
+# Debug screenshots and snapshots (archived locally — not committed)
+archive/
+
 # Playwright
 node_modules/
 /test-results/
