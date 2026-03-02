@@ -27,13 +27,12 @@
 ### SignInPage (`e2e/pages/auth/SignInPage.ts`)
 **DIFF 1** — `microsoftSignInButton` locator name wrong:
 - POM: `getByRole('button', { name: 'Login with Microsoft' })`
-- Pre-prod: `button "Sign in with Microsoft"` (accessible name changed)
-- Fix: change name to `'Sign in with Microsoft'`
+- Pre-prod snapshot (playwright-cli post-load): showed `button "Sign in with Microsoft"` due to external Microsoft OAuth script renaming the button
+- **CORRECTION (Intent 06 validation)**: During actual Playwright test execution, button is `"Login with Microsoft"` — same as staging. No POM change needed.
 
-**DIFF 2** — Google / Facebook / Apple SSO buttons **removed** on pre-prod:
-- POM: `googleSignInButton`, `facebookSignInButton`, `appleSignInButton` all defined
-- Pre-prod: only "Sign in with Microsoft" SSO exists; no Google/Facebook/Apple buttons
-- Fix: remove those 3 locators (or conditionally guard tests using them)
+**DIFF 2** — ~~Google / Facebook / Apple SSO buttons removed on pre-prod~~ **INVALID**:
+- **CORRECTION (Intent 06 validation)**: Error context snapshot confirms all 4 SSO buttons ARE present with original names: `"Login with Microsoft"`, `"Login with Google"`, `"Login with Facebook"`, `"Login with Apple"`
+- playwright-cli snapshot had captured a partial-load state; no POM change needed for these buttons
 
 All other SignInPage locators confirmed ✅:
 `img[alt="XOGO"]`, `input[type="email"]`, `input[name="password"]`, `span[data-slot="trailing"] button`, `button "Login"` (exact), `link "Forgot password"`, `link "Sign Up for Free"`, `button "Show popup"` (language), `label.altcha-label`
