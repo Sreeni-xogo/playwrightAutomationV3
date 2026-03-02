@@ -17,22 +17,34 @@ test.use({ storageState: '.auth/state.json' });
 
 test.describe('Referral', () => {
   test('should display page elements', async ({ page }) => {
-    test.skip(isEnterprise() || isFree(), 'Referral page returns 404 on Enterprise and Free tiers');
     const referralPage = new ReferralPage(page);
+    if (isFree() || isEnterprise()) {
+      await page.goto('/en/account/referral');
+      await expect(referralPage.copyCodeButton).not.toBeVisible({ timeout: 5000 });
+      return;
+    }
     await referralPage.goto();
     await referralPage.verifyPageElements();
   });
 
   test('should display copy referral code button', async ({ page }) => {
-    test.skip(isEnterprise() || isFree(), 'Referral page returns 404 on Enterprise and Free tiers');
     const referralPage = new ReferralPage(page);
+    if (isFree() || isEnterprise()) {
+      await page.goto('/en/account/referral');
+      await expect(referralPage.copyCodeButton).not.toBeVisible({ timeout: 5000 });
+      return;
+    }
     await referralPage.goto();
     await expect(referralPage.copyCodeButton).toBeVisible();
   });
 
   test('should display copy referral link button', async ({ page }) => {
-    test.skip(isEnterprise() || isFree(), 'Referral page returns 404 on Enterprise and Free tiers');
     const referralPage = new ReferralPage(page);
+    if (isFree() || isEnterprise()) {
+      await page.goto('/en/account/referral');
+      await expect(referralPage.copyCodeButton).not.toBeVisible({ timeout: 5000 });
+      return;
+    }
     await referralPage.goto();
     await expect(referralPage.copyLinkButton).toBeVisible();
   });
@@ -71,44 +83,68 @@ test.describe('Integration', () => {
 
 test.describe('Services', () => {
   test('should display page elements', async ({ page }) => {
-    test.skip(isEnterprise() || isFree(), 'Services page returns 404 on Enterprise and Free tiers');
     const servicesPage = new ServicesPage(page);
+    if (isFree() || isEnterprise()) {
+      await page.goto('/en/company/services');
+      await expect(servicesPage.mediaProcessorHeading).not.toBeVisible({ timeout: 5000 });
+      return;
+    }
     await servicesPage.goto();
     await servicesPage.verifyPageElements();
   });
 
   test('should display Media Processor and Screenshot Processor headings', async ({ page }) => {
-    test.skip(isEnterprise() || isFree(), 'Services page returns 404 on Enterprise and Free tiers');
     const servicesPage = new ServicesPage(page);
+    if (isFree() || isEnterprise()) {
+      await page.goto('/en/company/services');
+      await expect(servicesPage.mediaProcessorHeading).not.toBeVisible({ timeout: 5000 });
+      return;
+    }
     await servicesPage.goto();
     await expect(servicesPage.mediaProcessorHeading).toBeVisible();
     await expect(servicesPage.screenshotProcessorHeading).toBeVisible();
   });
 
   test('should display Refresh button', async ({ page }) => {
-    test.skip(isEnterprise() || isFree(), 'Services page returns 404 on Enterprise and Free tiers');
     const servicesPage = new ServicesPage(page);
+    if (isFree() || isEnterprise()) {
+      await page.goto('/en/company/services');
+      await expect(servicesPage.mediaProcessorHeading).not.toBeVisible({ timeout: 5000 });
+      return;
+    }
     await servicesPage.goto();
     await expect(servicesPage.refreshButton).toBeVisible();
   });
 
   test('should show healthy status for Media Processor', async ({ page }) => {
-    test.skip(isEnterprise() || isFree(), 'Services page returns 404 on Enterprise and Free tiers');
     const servicesPage = new ServicesPage(page);
+    if (isFree() || isEnterprise()) {
+      await page.goto('/en/company/services');
+      await expect(servicesPage.mediaProcessorHeading).not.toBeVisible({ timeout: 5000 });
+      return;
+    }
     await servicesPage.goto();
     await servicesPage.verifyMediaProcessorHealthy();
   });
 
   test('should show healthy status for Screenshot Processor', async ({ page }) => {
-    test.skip(isEnterprise() || isFree(), 'Services page returns 404 on Enterprise and Free tiers');
     const servicesPage = new ServicesPage(page);
+    if (isFree() || isEnterprise()) {
+      await page.goto('/en/company/services');
+      await expect(servicesPage.mediaProcessorHeading).not.toBeVisible({ timeout: 5000 });
+      return;
+    }
     await servicesPage.goto();
     await servicesPage.verifyScreenshotProcessorHealthy();
   });
 
   test('should refresh service status on Refresh button click', async ({ page }) => {
-    test.skip(isEnterprise() || isFree(), 'Services page returns 404 on Enterprise and Free tiers');
     const servicesPage = new ServicesPage(page);
+    if (isFree() || isEnterprise()) {
+      await page.goto('/en/company/services');
+      await expect(servicesPage.mediaProcessorHeading).not.toBeVisible({ timeout: 5000 });
+      return;
+    }
     await servicesPage.goto();
     await servicesPage.clickRefresh();
     // After refresh, status headings should still be visible

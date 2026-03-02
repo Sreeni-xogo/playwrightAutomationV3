@@ -5,7 +5,7 @@ import { isFree } from '../utils/tierGuard';
 
 // AIDEV-NOTE: Requires authenticated session — setup saves .auth/state.json, consumed here
 test.use({ storageState: '.auth/state.json' });
-// AIDEV-NOTE: Free tier — /en/widgets redirects to /en/upgrade. All tests skipped on Free.
+// AIDEV-NOTE: Free tier — /en/widgets redirects to /en/upgrade. Tests assert redirect; Pro runs full CRUD.
 
 const WIDGET_NAME = `AutoTest Widget ${Date.now()}`;
 const WIDGET_UPDATED_NAME = `AutoTest Widget Updated ${Date.now()}`;
@@ -16,22 +16,34 @@ const WIDGET_UPDATED_NAME = `AutoTest Widget Updated ${Date.now()}`;
 
 test.describe('Widgets — list page', () => {
   test('should display page heading', async ({ page }) => {
-    test.skip(isFree(), 'Widgets page redirects to /en/upgrade on Free tier');
     const widgetsPage = new WidgetsPage(page);
+    if (isFree()) {
+      await page.goto('/en/widgets');
+      await expect(page).toHaveURL('/en/upgrade');
+      return;
+    }
     await widgetsPage.goto();
     await widgetsPage.verifyOnWidgetsPage();
   });
 
   test('should display Add New button', async ({ page }) => {
-    test.skip(isFree(), 'Widgets page redirects to /en/upgrade on Free tier');
     const widgetsPage = new WidgetsPage(page);
+    if (isFree()) {
+      await page.goto('/en/widgets');
+      await expect(page).toHaveURL('/en/upgrade');
+      return;
+    }
     await widgetsPage.goto();
     await widgetsPage.verifyAddNewButtonVisible();
   });
 
   test('should display all type filter tabs', async ({ page }) => {
-    test.skip(isFree(), 'Widgets page redirects to /en/upgrade on Free tier');
     const widgetsPage = new WidgetsPage(page);
+    if (isFree()) {
+      await page.goto('/en/widgets');
+      await expect(page).toHaveURL('/en/upgrade');
+      return;
+    }
     await widgetsPage.goto();
     for (const tab of ['All', 'Clock', 'Weather', 'Timer', 'Note', 'JetSet', 'Programmatic Ads']) {
       await widgetsPage.verifyTabVisible(tab);
@@ -39,24 +51,36 @@ test.describe('Widgets — list page', () => {
   });
 
   test('should switch to Clock tab', async ({ page }) => {
-    test.skip(isFree(), 'Widgets page redirects to /en/upgrade on Free tier');
     const widgetsPage = new WidgetsPage(page);
+    if (isFree()) {
+      await page.goto('/en/widgets');
+      await expect(page).toHaveURL('/en/upgrade');
+      return;
+    }
     await widgetsPage.goto();
     await widgetsPage.clickTab('Clock');
     await expect(widgetsPage.clockTab).toHaveAttribute('aria-selected', 'true');
   });
 
   test('should switch to Weather tab', async ({ page }) => {
-    test.skip(isFree(), 'Widgets page redirects to /en/upgrade on Free tier');
     const widgetsPage = new WidgetsPage(page);
+    if (isFree()) {
+      await page.goto('/en/widgets');
+      await expect(page).toHaveURL('/en/upgrade');
+      return;
+    }
     await widgetsPage.goto();
     await widgetsPage.clickTab('Weather');
     await expect(widgetsPage.weatherTab).toHaveAttribute('aria-selected', 'true');
   });
 
   test('should switch to Timer tab', async ({ page }) => {
-    test.skip(isFree(), 'Widgets page redirects to /en/upgrade on Free tier');
     const widgetsPage = new WidgetsPage(page);
+    if (isFree()) {
+      await page.goto('/en/widgets');
+      await expect(page).toHaveURL('/en/upgrade');
+      return;
+    }
     await widgetsPage.goto();
     await widgetsPage.clickTab('Timer');
     await expect(widgetsPage.timerTab).toHaveAttribute('aria-selected', 'true');
@@ -72,8 +96,12 @@ test.describe('Widgets — list page', () => {
 // AIDEV-NOTE: CRUD tests share module-level name constants — must run serially
 test.describe.serial('Widgets — CRUD', () => {
   test('create: should open Add New widget menu', async ({ page }) => {
-    test.skip(isFree(), 'Widgets page redirects to /en/upgrade on Free tier');
     const widgetsPage = new WidgetsPage(page);
+    if (isFree()) {
+      await page.goto('/en/widgets');
+      await expect(page).toHaveURL('/en/upgrade');
+      return;
+    }
     await widgetsPage.goto();
     await widgetsPage.clickAddNew();
     // AIDEV-NOTE: Add New opens a dropdown menu with Clock/Timer/Weather/Note/JetSet/Programmatic Ads options
@@ -81,9 +109,13 @@ test.describe.serial('Widgets — CRUD', () => {
   });
 
   test('create: should create a Clock widget', async ({ page }) => {
-    test.skip(isFree(), 'Widgets page redirects to /en/upgrade on Free tier');
     const widgetsPage = new WidgetsPage(page);
     const widgetEditPage = new WidgetEditPage(page);
+    if (isFree()) {
+      await page.goto('/en/widgets');
+      await expect(page).toHaveURL('/en/upgrade');
+      return;
+    }
     await widgetsPage.goto();
     await widgetsPage.clickAddNew();
     // AIDEV-NOTE: Type picker is a dropdown menu — use menuitem role (not button)
@@ -97,9 +129,13 @@ test.describe.serial('Widgets — CRUD', () => {
   });
 
   test('edit: should rename the created widget', async ({ page }) => {
-    test.skip(isFree(), 'Widgets page redirects to /en/upgrade on Free tier');
     const widgetsPage = new WidgetsPage(page);
     const widgetEditPage = new WidgetEditPage(page);
+    if (isFree()) {
+      await page.goto('/en/widgets');
+      await expect(page).toHaveURL('/en/upgrade');
+      return;
+    }
     await widgetsPage.goto();
     await widgetsPage.verifyWidgetVisible(WIDGET_NAME);
     await widgetsPage.clickWidget(WIDGET_NAME);
@@ -111,9 +147,13 @@ test.describe.serial('Widgets — CRUD', () => {
   });
 
   test('edit: should display Details, Theme, and Used in Playlists sections', async ({ page }) => {
-    test.skip(isFree(), 'Widgets page redirects to /en/upgrade on Free tier');
     const widgetsPage = new WidgetsPage(page);
     const widgetEditPage = new WidgetEditPage(page);
+    if (isFree()) {
+      await page.goto('/en/widgets');
+      await expect(page).toHaveURL('/en/upgrade');
+      return;
+    }
     await widgetsPage.goto();
     await widgetsPage.clickWidget(WIDGET_UPDATED_NAME);
     await widgetEditPage.verifyDetailsSectionVisible();
@@ -122,8 +162,12 @@ test.describe.serial('Widgets — CRUD', () => {
   });
 
   test('delete: should delete the widget', async ({ page }) => {
-    test.skip(isFree(), 'Widgets page redirects to /en/upgrade on Free tier');
     const widgetsPage = new WidgetsPage(page);
+    if (isFree()) {
+      await page.goto('/en/widgets');
+      await expect(page).toHaveURL('/en/upgrade');
+      return;
+    }
     await widgetsPage.goto();
     const card = widgetsPage.getWidgetCard(WIDGET_UPDATED_NAME);
     // AIDEV-NOTE: Two unlabelled action buttons — last is typically Delete
