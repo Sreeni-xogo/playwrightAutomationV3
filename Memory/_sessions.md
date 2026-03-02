@@ -39,3 +39,8 @@
 
 ## 2026-03-02
 - 12:05 | BRAIN Refine | TierAwareTestGuards — goal: ACCOUNT_TIER env var (free/pro/enterprise) drives conditional assertions across all tier-sensitive specs; replaces hard-coded skips
+- 14:00 | Intent Done | TierAwareTestGuards — Intent 04 TierGuardReferralAndServices: Referral + Services skipped on Free + Enterprise in account-settings.spec.ts
+- 14:15 | Intent Done | TierAwareTestGuards — Intent 05 TierGuardFreePageAccess: Planners + Overlays + Widgets skipped on Free; Dashboard/Profile/Playlists CRUD extra guards added
+- 14:20 | Intent Done | TierAwareTestGuards — Intent 06 TierGuardFreeAssetLimits: Library URL CRUD + Players Add New skipped on Free
+- 14:30 | Intent Done | TierAwareTestGuards — Intent 07 ValidateAndDocument: 97 passed / 50 skipped / 0 failed on Free tier; all specs committed
+- 14:30 | Session End | TierAwareTestGuards — status: Complete
