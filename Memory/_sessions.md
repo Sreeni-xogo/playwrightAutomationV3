@@ -47,3 +47,7 @@
 
 ## 2026-03-02 (session 2)
 - 15:00 | feat(e2e) | ZeroSkips — replaced all 50 Free-tier test.skip() with if/else tier branching; 147 passed / 0 skipped / 0 failed on Free tier
+
+## 2026-03-02 (session 3)
+- 16:00 | fix(e2e) | v3-pre-prod — merged ZeroSkips from main; fixed auth credentials (#-in-password must be quoted in .env); DIFF-14 (pre-prod SSO: "Sign in with Microsoft" only, no Google/Facebook/Apple); saveProfile() networkidle fix; 147 passed / 0 failed / 0 skipped on v3-pre-prod
+- 16:30 | chore | prod branch — created `prod` branch from v3-pre-prod, pushed to origin, set upstream tracking
