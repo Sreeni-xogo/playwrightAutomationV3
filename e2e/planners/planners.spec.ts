@@ -1,9 +1,11 @@
 import { test, expect } from '@playwright/test';
 import { PlannersPage } from '../pages/planners/PlannersPage';
 import { PlannerEditPage } from '../pages/planners/PlannerEditPage';
+import { isFree } from '../utils/tierGuard';
 
 // AIDEV-NOTE: Requires authenticated session — setup saves .auth/state.json, consumed here
 test.use({ storageState: '.auth/state.json' });
+// AIDEV-NOTE: Free tier — /en/planners redirects to /en/upgrade. All tests skipped on Free.
 
 const PLANNER_NAME = `AutoTest Planner ${Date.now()}`;
 const PLANNER_UPDATED_NAME = `AutoTest Planner Updated ${Date.now()}`;
@@ -14,18 +16,21 @@ const PLANNER_UPDATED_NAME = `AutoTest Planner Updated ${Date.now()}`;
 
 test.describe('Planners — list page', () => {
   test('should display page heading', async ({ page }) => {
+    test.skip(isFree(), 'Planners page redirects to /en/upgrade on Free tier');
     const plannersPage = new PlannersPage(page);
     await plannersPage.goto();
     await plannersPage.verifyOnPlannersPage();
   });
 
   test('should display Add New link', async ({ page }) => {
+    test.skip(isFree(), 'Planners page redirects to /en/upgrade on Free tier');
     const plannersPage = new PlannersPage(page);
     await plannersPage.goto();
     await plannersPage.verifyAddNewLinkVisible();
   });
 
   test('should navigate to Add New planner page', async ({ page }) => {
+    test.skip(isFree(), 'Planners page redirects to /en/upgrade on Free tier');
     const plannersPage = new PlannersPage(page);
     await plannersPage.goto();
     await plannersPage.clickAddNew();
@@ -40,6 +45,7 @@ test.describe('Planners — list page', () => {
 // AIDEV-NOTE: Serial required — CRUD tests share PLANNER_NAME/PLANNER_UPDATED_NAME and depend on prior test state
 test.describe.serial('Planners — CRUD', () => {
   test('create: should create a new planner', async ({ page }) => {
+    test.skip(isFree(), 'Planners page redirects to /en/upgrade on Free tier');
     const plannerEditPage = new PlannerEditPage(page);
     await plannerEditPage.gotoAddNew();
     await plannerEditPage.verifyOnAddNewPage();
@@ -53,6 +59,7 @@ test.describe.serial('Planners — CRUD', () => {
   });
 
   test('create: new planner page should display calendar and Manage Playlists button', async ({ page }) => {
+    test.skip(isFree(), 'Planners page redirects to /en/upgrade on Free tier');
     const plannerEditPage = new PlannerEditPage(page);
     await plannerEditPage.gotoAddNew();
     await plannerEditPage.verifyManagePlaylistsVisible();
@@ -61,6 +68,7 @@ test.describe.serial('Planners — CRUD', () => {
   });
 
   test('edit: should rename the created planner', async ({ page }) => {
+    test.skip(isFree(), 'Planners page redirects to /en/upgrade on Free tier');
     const plannersPage = new PlannersPage(page);
     const plannerEditPage = new PlannerEditPage(page);
     await plannersPage.goto();
@@ -74,6 +82,7 @@ test.describe.serial('Planners — CRUD', () => {
   });
 
   test('edit: should toggle Select All Days checkbox', async ({ page }) => {
+    test.skip(isFree(), 'Planners page redirects to /en/upgrade on Free tier');
     const plannersPage = new PlannersPage(page);
     const plannerEditPage = new PlannerEditPage(page);
     await plannersPage.goto();
@@ -87,6 +96,7 @@ test.describe.serial('Planners — CRUD', () => {
   });
 
   test('delete: should delete the planner', async ({ page }) => {
+    test.skip(isFree(), 'Planners page redirects to /en/upgrade on Free tier');
     const plannersPage = new PlannersPage(page);
     await plannersPage.goto();
     await page.waitForLoadState('networkidle');

@@ -1,9 +1,11 @@
 import { test, expect } from '@playwright/test';
 import { WidgetsPage } from '../pages/widgets/WidgetsPage';
 import { WidgetEditPage } from '../pages/widgets/WidgetEditPage';
+import { isFree } from '../utils/tierGuard';
 
 // AIDEV-NOTE: Requires authenticated session — setup saves .auth/state.json, consumed here
 test.use({ storageState: '.auth/state.json' });
+// AIDEV-NOTE: Free tier — /en/widgets redirects to /en/upgrade. All tests skipped on Free.
 
 const WIDGET_NAME = `AutoTest Widget ${Date.now()}`;
 const WIDGET_UPDATED_NAME = `AutoTest Widget Updated ${Date.now()}`;
@@ -14,18 +16,21 @@ const WIDGET_UPDATED_NAME = `AutoTest Widget Updated ${Date.now()}`;
 
 test.describe('Widgets — list page', () => {
   test('should display page heading', async ({ page }) => {
+    test.skip(isFree(), 'Widgets page redirects to /en/upgrade on Free tier');
     const widgetsPage = new WidgetsPage(page);
     await widgetsPage.goto();
     await widgetsPage.verifyOnWidgetsPage();
   });
 
   test('should display Add New button', async ({ page }) => {
+    test.skip(isFree(), 'Widgets page redirects to /en/upgrade on Free tier');
     const widgetsPage = new WidgetsPage(page);
     await widgetsPage.goto();
     await widgetsPage.verifyAddNewButtonVisible();
   });
 
   test('should display all type filter tabs', async ({ page }) => {
+    test.skip(isFree(), 'Widgets page redirects to /en/upgrade on Free tier');
     const widgetsPage = new WidgetsPage(page);
     await widgetsPage.goto();
     for (const tab of ['All', 'Clock', 'Weather', 'Timer', 'Note', 'JetSet', 'Programmatic Ads']) {
@@ -34,6 +39,7 @@ test.describe('Widgets — list page', () => {
   });
 
   test('should switch to Clock tab', async ({ page }) => {
+    test.skip(isFree(), 'Widgets page redirects to /en/upgrade on Free tier');
     const widgetsPage = new WidgetsPage(page);
     await widgetsPage.goto();
     await widgetsPage.clickTab('Clock');
@@ -41,6 +47,7 @@ test.describe('Widgets — list page', () => {
   });
 
   test('should switch to Weather tab', async ({ page }) => {
+    test.skip(isFree(), 'Widgets page redirects to /en/upgrade on Free tier');
     const widgetsPage = new WidgetsPage(page);
     await widgetsPage.goto();
     await widgetsPage.clickTab('Weather');
@@ -48,6 +55,7 @@ test.describe('Widgets — list page', () => {
   });
 
   test('should switch to Timer tab', async ({ page }) => {
+    test.skip(isFree(), 'Widgets page redirects to /en/upgrade on Free tier');
     const widgetsPage = new WidgetsPage(page);
     await widgetsPage.goto();
     await widgetsPage.clickTab('Timer');
@@ -64,6 +72,7 @@ test.describe('Widgets — list page', () => {
 // AIDEV-NOTE: CRUD tests share module-level name constants — must run serially
 test.describe.serial('Widgets — CRUD', () => {
   test('create: should open Add New widget menu', async ({ page }) => {
+    test.skip(isFree(), 'Widgets page redirects to /en/upgrade on Free tier');
     const widgetsPage = new WidgetsPage(page);
     await widgetsPage.goto();
     await widgetsPage.clickAddNew();
@@ -72,6 +81,7 @@ test.describe.serial('Widgets — CRUD', () => {
   });
 
   test('create: should create a Clock widget', async ({ page }) => {
+    test.skip(isFree(), 'Widgets page redirects to /en/upgrade on Free tier');
     const widgetsPage = new WidgetsPage(page);
     const widgetEditPage = new WidgetEditPage(page);
     await widgetsPage.goto();
@@ -87,6 +97,7 @@ test.describe.serial('Widgets — CRUD', () => {
   });
 
   test('edit: should rename the created widget', async ({ page }) => {
+    test.skip(isFree(), 'Widgets page redirects to /en/upgrade on Free tier');
     const widgetsPage = new WidgetsPage(page);
     const widgetEditPage = new WidgetEditPage(page);
     await widgetsPage.goto();
@@ -100,6 +111,7 @@ test.describe.serial('Widgets — CRUD', () => {
   });
 
   test('edit: should display Details, Theme, and Used in Playlists sections', async ({ page }) => {
+    test.skip(isFree(), 'Widgets page redirects to /en/upgrade on Free tier');
     const widgetsPage = new WidgetsPage(page);
     const widgetEditPage = new WidgetEditPage(page);
     await widgetsPage.goto();
@@ -110,6 +122,7 @@ test.describe.serial('Widgets — CRUD', () => {
   });
 
   test('delete: should delete the widget', async ({ page }) => {
+    test.skip(isFree(), 'Widgets page redirects to /en/upgrade on Free tier');
     const widgetsPage = new WidgetsPage(page);
     await widgetsPage.goto();
     const card = widgetsPage.getWidgetCard(WIDGET_UPDATED_NAME);

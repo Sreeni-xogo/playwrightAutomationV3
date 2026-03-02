@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { ProfilePage } from '../pages/profile/ProfilePage';
+import { isFree } from '../utils/tierGuard';
 
 // AIDEV-NOTE: Requires authenticated session — setup saves .auth/state.json, consumed here
 test.use({ storageState: '.auth/state.json' });
@@ -12,6 +13,8 @@ test.describe('Profile', () => {
   });
 
   test('should display Settings sidebar navigation links', async ({ page }) => {
+    // AIDEV-NOTE: Free tier — sidebar shows "Upgrade to Pro" instead of "Payment" nav link
+    test.skip(isFree(), 'Settings sidebar differs on Free tier — Payment link replaced by Upgrade to Pro');
     const profilePage = new ProfilePage(page);
     await profilePage.goto();
     await expect(profilePage.settingsSidebarHeading).toBeVisible();

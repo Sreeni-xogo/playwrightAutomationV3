@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { PlayersPage } from '../pages/players/PlayersPage';
 import { PlayerDetailPage } from '../pages/players/PlayerDetailPage';
+import { isFree } from '../utils/tierGuard';
 
 // AIDEV-NOTE: Requires authenticated session — setup saves .auth/state.json, consumed here
 test.use({ storageState: '.auth/state.json' });
@@ -63,6 +64,7 @@ test.describe('Players — list page', () => {
 
 test.describe('Players — Add New page (UI only)', () => {
   test('should navigate to Add New page via Add New button', async ({ page }) => {
+    test.skip(isFree(), 'Add New may show upgrade modal on Free tier at 1-player cap');
     const playersPage = new PlayersPage(page);
     await playersPage.goto();
     await playersPage.clickAddNew();

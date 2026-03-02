@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { LibraryPage } from '../pages/library/LibraryPage';
 import { UploadPage } from '../pages/library/UploadPage';
+import { isFree } from '../utils/tierGuard';
 
 // AIDEV-NOTE: Requires authenticated session — setup saves .auth/state.json, consumed here
 test.use({ storageState: '.auth/state.json' });
@@ -119,6 +120,7 @@ test.describe('Library — URL CRUD', () => {
   test.describe.configure({ mode: 'serial' });
 
   test('create: should add a new URL asset', async ({ page }) => {
+    test.skip(isFree(), 'URL CRUD skipped on Free tier — near 15-asset cap');
     const libraryPage = new LibraryPage(page);
     await libraryPage.goto();
     await libraryPage.clickAddNewUrl();
@@ -132,6 +134,7 @@ test.describe('Library — URL CRUD', () => {
   });
 
   test('edit: should rename the created URL asset', async ({ page }) => {
+    test.skip(isFree(), 'URL CRUD skipped on Free tier — near 15-asset cap');
     const libraryPage = new LibraryPage(page);
     await libraryPage.goto();
     await libraryPage.filterByUrls();
@@ -154,6 +157,7 @@ test.describe('Library — URL CRUD', () => {
   });
 
   test('delete: should delete the URL asset', async ({ page }) => {
+    test.skip(isFree(), 'URL CRUD skipped on Free tier — near 15-asset cap');
     const libraryPage = new LibraryPage(page);
     await libraryPage.goto();
     await libraryPage.filterByUrls();

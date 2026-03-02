@@ -4,28 +4,34 @@ import { HandoverDeletePage } from '../pages/settings/HandoverDeletePage';
 import { IntegrationPage } from '../pages/settings/IntegrationPage';
 import { ServicesPage } from '../pages/settings/ServicesPage';
 import { CompanyPlayersPage } from '../pages/settings/CompanyPlayersPage';
+import { isFree, isEnterprise } from '../utils/tierGuard';
 
 // AIDEV-NOTE: Requires authenticated session — setup saves .auth/state.json, consumed here
 test.use({ storageState: '.auth/state.json' });
 
 // ---------------------------------------------------------------------------
 // Referral Page
+// AIDEV-NOTE: /en/account/referral returns 404 on Enterprise and Free tiers — route does not exist.
+// Pro only: referral page is accessible with copy code/link buttons.
 // ---------------------------------------------------------------------------
 
 test.describe('Referral', () => {
   test('should display page elements', async ({ page }) => {
+    test.skip(isEnterprise() || isFree(), 'Referral page returns 404 on Enterprise and Free tiers');
     const referralPage = new ReferralPage(page);
     await referralPage.goto();
     await referralPage.verifyPageElements();
   });
 
   test('should display copy referral code button', async ({ page }) => {
+    test.skip(isEnterprise() || isFree(), 'Referral page returns 404 on Enterprise and Free tiers');
     const referralPage = new ReferralPage(page);
     await referralPage.goto();
     await expect(referralPage.copyCodeButton).toBeVisible();
   });
 
   test('should display copy referral link button', async ({ page }) => {
+    test.skip(isEnterprise() || isFree(), 'Referral page returns 404 on Enterprise and Free tiers');
     const referralPage = new ReferralPage(page);
     await referralPage.goto();
     await expect(referralPage.copyLinkButton).toBeVisible();
@@ -59,16 +65,20 @@ test.describe('Integration', () => {
 
 // ---------------------------------------------------------------------------
 // Services Page
+// AIDEV-NOTE: /en/company/services returns 404 on Enterprise and Free tiers — route does not exist.
+// Pro only: services page is accessible with Media/Screenshot Processor status.
 // ---------------------------------------------------------------------------
 
 test.describe('Services', () => {
   test('should display page elements', async ({ page }) => {
+    test.skip(isEnterprise() || isFree(), 'Services page returns 404 on Enterprise and Free tiers');
     const servicesPage = new ServicesPage(page);
     await servicesPage.goto();
     await servicesPage.verifyPageElements();
   });
 
   test('should display Media Processor and Screenshot Processor headings', async ({ page }) => {
+    test.skip(isEnterprise() || isFree(), 'Services page returns 404 on Enterprise and Free tiers');
     const servicesPage = new ServicesPage(page);
     await servicesPage.goto();
     await expect(servicesPage.mediaProcessorHeading).toBeVisible();
@@ -76,24 +86,28 @@ test.describe('Services', () => {
   });
 
   test('should display Refresh button', async ({ page }) => {
+    test.skip(isEnterprise() || isFree(), 'Services page returns 404 on Enterprise and Free tiers');
     const servicesPage = new ServicesPage(page);
     await servicesPage.goto();
     await expect(servicesPage.refreshButton).toBeVisible();
   });
 
   test('should show healthy status for Media Processor', async ({ page }) => {
+    test.skip(isEnterprise() || isFree(), 'Services page returns 404 on Enterprise and Free tiers');
     const servicesPage = new ServicesPage(page);
     await servicesPage.goto();
     await servicesPage.verifyMediaProcessorHealthy();
   });
 
   test('should show healthy status for Screenshot Processor', async ({ page }) => {
+    test.skip(isEnterprise() || isFree(), 'Services page returns 404 on Enterprise and Free tiers');
     const servicesPage = new ServicesPage(page);
     await servicesPage.goto();
     await servicesPage.verifyScreenshotProcessorHealthy();
   });
 
   test('should refresh service status on Refresh button click', async ({ page }) => {
+    test.skip(isEnterprise() || isFree(), 'Services page returns 404 on Enterprise and Free tiers');
     const servicesPage = new ServicesPage(page);
     await servicesPage.goto();
     await servicesPage.clickRefresh();

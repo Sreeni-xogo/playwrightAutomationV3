@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { PlaylistsPage } from '../pages/playlists/PlaylistsPage';
 import { PlaylistEditPage } from '../pages/playlists/PlaylistEditPage';
+import { isFree } from '../utils/tierGuard';
 
 // AIDEV-NOTE: Requires authenticated session — setup saves .auth/state.json, consumed here
 test.use({ storageState: '.auth/state.json' });
@@ -42,6 +43,8 @@ test.describe('Playlists — CRUD', () => {
   test.describe.configure({ mode: 'serial' });
 
   test('create: should create a new playlist', async ({ page }) => {
+    // AIDEV-NOTE: Free tier — addOneItemFromLibrary() requires URL assets; Free account has no URL items
+    test.skip(isFree(), 'Playlist CRUD skipped on Free — no URL assets available in library');
     const playlistEditPage = new PlaylistEditPage(page);
     await page.goto('/en/playlists/add');
     await playlistEditPage.verifyOnEditPage();
@@ -55,6 +58,7 @@ test.describe('Playlists — CRUD', () => {
   });
 
   test('edit: should rename the created playlist', async ({ page }) => {
+    test.skip(isFree(), 'Playlist CRUD skipped on Free — no URL assets available in library');
     const playlistsPage = new PlaylistsPage(page);
     const playlistEditPage = new PlaylistEditPage(page);
     await playlistsPage.goto();
@@ -68,6 +72,7 @@ test.describe('Playlists — CRUD', () => {
   });
 
   test('edit: should display Schedule, Add Items, and column headers on edit page', async ({ page }) => {
+    test.skip(isFree(), 'Playlist CRUD skipped on Free — no URL assets available in library');
     const playlistsPage = new PlaylistsPage(page);
     const playlistEditPage = new PlaylistEditPage(page);
     await playlistsPage.goto();
@@ -79,6 +84,7 @@ test.describe('Playlists — CRUD', () => {
   });
 
   test('delete: should delete the playlist', async ({ page }) => {
+    test.skip(isFree(), 'Playlist CRUD skipped on Free — no URL assets available in library');
     const playlistsPage = new PlaylistsPage(page);
     await playlistsPage.goto();
     await playlistsPage.deletePlaylist(PLAYLIST_UPDATED_NAME);
