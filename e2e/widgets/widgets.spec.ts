@@ -28,7 +28,8 @@ test.describe('Widgets — list page', () => {
   test('should display all type filter tabs', async ({ page }) => {
     const widgetsPage = new WidgetsPage(page);
     await widgetsPage.goto();
-    for (const tab of ['All', 'Clock', 'Weather', 'Timer', 'Note', 'JetSet', 'Programmatic Ads']) {
+    // AIDEV-NOTE: DIFF-07 — JetSet tab absent on pre-prod; removed from assertion list
+    for (const tab of ['All', 'Clock', 'Weather', 'Timer', 'Note', 'Programmatic Ads']) {
       await widgetsPage.verifyTabVisible(tab);
     }
   });

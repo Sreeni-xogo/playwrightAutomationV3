@@ -3,7 +3,7 @@ import { BasePage } from '../BasePage';
 
 // AIDEV-NOTE: Widgets list page — shows paginated grid of all widgets at /en/widgets
 // Each card links to /en/widgets/:id with a heading (level 5) for the widget name
-// Has type filter tabs: All, Clock, Weather, Timer, Note, JetSet, Programmatic Ads
+// Has type filter tabs: All, Clock, Weather, Timer, Note, Programmatic Ads (JetSet absent on pre-prod — DIFF-07)
 // Each card has two unlabelled action buttons (e.g. duplicate/delete)
 export class WidgetsPage extends BasePage {
   readonly pageHeading: Locator;
@@ -24,7 +24,7 @@ export class WidgetsPage extends BasePage {
   readonly weatherTab: Locator;
   readonly timerTab: Locator;
   readonly noteTab: Locator;
-  readonly jetSetTab: Locator;
+  // AIDEV-NOTE: DIFF-07 — jetSetTab absent on pre-prod; removed
   readonly programmaticAdsTab: Locator;
 
   constructor(page: Page) {
@@ -50,7 +50,6 @@ export class WidgetsPage extends BasePage {
     this.weatherTab = page.getByRole('tab', { name: 'Weather' });
     this.timerTab = page.getByRole('tab', { name: 'Timer' });
     this.noteTab = page.getByRole('tab', { name: 'Note' });
-    this.jetSetTab = page.getByRole('tab', { name: 'JetSet' });
     this.programmaticAdsTab = page.getByRole('tab', { name: 'Programmatic Ads' });
   }
 

@@ -34,9 +34,10 @@ export class TeamsGroupingPage extends BasePage {
     this.toggleSectionHeading = page.getByRole('heading', { name: 'Teams and Grouping - ON', level: 2 });
     // AIDEV-NOTE: The button text varies: "Enable Teams and Grouping" when off, "Request Pending" when submitted, "Disable" when active.
     // Using a broad locator scoped to the toggle section. Call the specific state method for precise assertions.
+    // AIDEV-NOTE: DIFF-09 — pre-prod shows "Request Reset to Basic Mode" when Teams is fully active
     this.featureToggleButton = page.locator('button').filter({ hasText: 'Teams and Grouping' }).or(
       page.getByRole('button', { name: 'Request Pending' })
-    );
+    ).or(page.getByRole('button', { name: 'Request Reset to Basic Mode' }));
     this.pendingNote = page.getByText('Please allow time for your request to be reviewed by our support team.');
   }
 

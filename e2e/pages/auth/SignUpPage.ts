@@ -52,10 +52,13 @@ export class SignUpPage extends BasePage {
     this.passwordInput = page.locator('input[name="password"]');
     this.passwordToggle = page.locator('div').filter({ hasText: 'Password' }).nth(1).getByRole('button');
     this.confirmPasswordInput = page.locator('input[name="confirmPassword"]');
-    this.confirmPasswordToggle = page.locator('div').filter({ hasText: 'Confirm password' }).getByRole('button');
+    // AIDEV-NOTE: DIFF-03 — pre-prod label changed to "Reenter your password"
+    this.confirmPasswordToggle = page.locator('div').filter({ hasText: 'Reenter your password' }).getByRole('button');
     this.resellerCodeToggle = page.getByRole('switch', { name: 'I have a reseller code' });
     this.referralCodeToggle = page.getByRole('switch', { name: 'I have a referral code' });
-    this.eulaToggle = page.getByRole('switch', { name: 'I have read and accept the End User License Agreement' });
+    // AIDEV-NOTE: DIFF-04 — pre-prod accessible name has "Read " prefix + "(opens in new window)" suffix
+    this.eulaToggle = page.getByRole('switch', { name: 'I have read and accept the End User License Agreement' })
+      .or(page.getByRole('switch', { name: 'I have read and accept the Read End User License Agreement (opens in new window)' }));
     this.eulaLink = page.getByRole('link', { name: 'Read End User License Agreement (opens in new window)' });
     this.nextButton = page.getByRole('button', { name: 'Next' });
     this.returnToLoginLink = page.getByRole('link', { name: 'Return to log in' });
