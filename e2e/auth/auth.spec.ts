@@ -2,10 +2,10 @@ import { test, expect } from '@playwright/test';
 import { SignInPage } from '../pages/auth/SignInPage';
 import { SignUpPage } from '../pages/auth/SignUpPage';
 import { ForgotPasswordPage } from '../pages/auth/ForgotPasswordPage';
+import { getCredentials } from '../utils/tierGuard';
 
-// AIDEV-NOTE: Credentials sourced from environment variables — set in .env before running
-const EMAIL = process.env['EMAIL'] ?? '';
-const PASSWORD = process.env['PASSWORD'] ?? '';
+// AIDEV-NOTE: Credentials sourced via getCredentials() — resolves tier-appropriate email/password
+const { email: EMAIL, password: PASSWORD } = getCredentials();
 
 // ---------------------------------------------------------------------------
 // Sign In

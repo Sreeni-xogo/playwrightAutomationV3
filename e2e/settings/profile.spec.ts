@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { ProfilePage } from '../pages/profile/ProfilePage';
+import { isFree } from '../utils/tierGuard';
 
 // AIDEV-NOTE: Requires authenticated session — setup saves .auth/state.json, consumed here
 test.use({ storageState: '.auth/state.json' });
@@ -12,13 +13,18 @@ test.describe('Profile', () => {
   });
 
   test('should display Settings sidebar navigation links', async ({ page }) => {
+    // AIDEV-NOTE: Free tier — sidebar shows "Upgrade to Pro" instead of "Payment" nav link
     const profilePage = new ProfilePage(page);
     await profilePage.goto();
     await expect(profilePage.settingsSidebarHeading).toBeVisible();
     await expect(profilePage.profileNavLink).toBeVisible();
     await expect(profilePage.membersNavLink).toBeVisible();
     await expect(profilePage.licensesNavLink).toBeVisible();
-    await expect(profilePage.paymentNavLink).toBeVisible();
+    if (isFree()) {
+      await expect(page.getByRole('link', { name: 'Upgrade to Pro' }).first()).toBeVisible();
+    } else {
+      await expect(profilePage.paymentNavLink).toBeVisible();
+    }
   });
 
   test('should display editable first name, last name, and title fields', async ({ page }) => {

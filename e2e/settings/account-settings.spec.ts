@@ -4,30 +4,48 @@ import { HandoverDeletePage } from '../pages/settings/HandoverDeletePage';
 import { IntegrationPage } from '../pages/settings/IntegrationPage';
 import { ServicesPage } from '../pages/settings/ServicesPage';
 import { CompanyPlayersPage } from '../pages/settings/CompanyPlayersPage';
+import { isFree, isEnterprise } from '../utils/tierGuard';
 
 // AIDEV-NOTE: Requires authenticated session — setup saves .auth/state.json, consumed here
 test.use({ storageState: '.auth/state.json' });
 
 // ---------------------------------------------------------------------------
 // Referral Page
+// AIDEV-NOTE: /en/account/referral returns 404 on Enterprise and Free tiers — route does not exist.
+// Pro only: referral page is accessible with copy code/link buttons.
 // ---------------------------------------------------------------------------
 
 // AIDEV-NOTE: DIFF-13 — /en/account/referral returns 404 on pre-prod. Skipped.
 test.describe.skip('Referral', () => {
   test('should display page elements', async ({ page }) => {
     const referralPage = new ReferralPage(page);
+    if (isFree() || isEnterprise()) {
+      await page.goto('/en/account/referral');
+      await expect(referralPage.copyCodeButton).not.toBeVisible({ timeout: 5000 });
+      return;
+    }
     await referralPage.goto();
     await referralPage.verifyPageElements();
   });
 
   test('should display copy referral code button', async ({ page }) => {
     const referralPage = new ReferralPage(page);
+    if (isFree() || isEnterprise()) {
+      await page.goto('/en/account/referral');
+      await expect(referralPage.copyCodeButton).not.toBeVisible({ timeout: 5000 });
+      return;
+    }
     await referralPage.goto();
     await expect(referralPage.copyCodeButton).toBeVisible();
   });
 
   test('should display copy referral link button', async ({ page }) => {
     const referralPage = new ReferralPage(page);
+    if (isFree() || isEnterprise()) {
+      await page.goto('/en/account/referral');
+      await expect(referralPage.copyCodeButton).not.toBeVisible({ timeout: 5000 });
+      return;
+    }
     await referralPage.goto();
     await expect(referralPage.copyLinkButton).toBeVisible();
   });
@@ -60,18 +78,30 @@ test.describe('Integration', () => {
 
 // ---------------------------------------------------------------------------
 // Services Page
+// AIDEV-NOTE: /en/company/services returns 404 on Enterprise and Free tiers — route does not exist.
+// Pro only: services page is accessible with Media/Screenshot Processor status.
 // ---------------------------------------------------------------------------
 
 // AIDEV-NOTE: DIFF-10 — /en/company/services returns 404 on pre-prod. Skipped.
 test.describe.skip('Services', () => {
   test('should display page elements', async ({ page }) => {
     const servicesPage = new ServicesPage(page);
+    if (isFree() || isEnterprise()) {
+      await page.goto('/en/company/services');
+      await expect(servicesPage.mediaProcessorHeading).not.toBeVisible({ timeout: 5000 });
+      return;
+    }
     await servicesPage.goto();
     await servicesPage.verifyPageElements();
   });
 
   test('should display Media Processor and Screenshot Processor headings', async ({ page }) => {
     const servicesPage = new ServicesPage(page);
+    if (isFree() || isEnterprise()) {
+      await page.goto('/en/company/services');
+      await expect(servicesPage.mediaProcessorHeading).not.toBeVisible({ timeout: 5000 });
+      return;
+    }
     await servicesPage.goto();
     await expect(servicesPage.mediaProcessorHeading).toBeVisible();
     await expect(servicesPage.screenshotProcessorHeading).toBeVisible();
@@ -79,24 +109,44 @@ test.describe.skip('Services', () => {
 
   test('should display Refresh button', async ({ page }) => {
     const servicesPage = new ServicesPage(page);
+    if (isFree() || isEnterprise()) {
+      await page.goto('/en/company/services');
+      await expect(servicesPage.mediaProcessorHeading).not.toBeVisible({ timeout: 5000 });
+      return;
+    }
     await servicesPage.goto();
     await expect(servicesPage.refreshButton).toBeVisible();
   });
 
   test('should show healthy status for Media Processor', async ({ page }) => {
     const servicesPage = new ServicesPage(page);
+    if (isFree() || isEnterprise()) {
+      await page.goto('/en/company/services');
+      await expect(servicesPage.mediaProcessorHeading).not.toBeVisible({ timeout: 5000 });
+      return;
+    }
     await servicesPage.goto();
     await servicesPage.verifyMediaProcessorHealthy();
   });
 
   test('should show healthy status for Screenshot Processor', async ({ page }) => {
     const servicesPage = new ServicesPage(page);
+    if (isFree() || isEnterprise()) {
+      await page.goto('/en/company/services');
+      await expect(servicesPage.mediaProcessorHeading).not.toBeVisible({ timeout: 5000 });
+      return;
+    }
     await servicesPage.goto();
     await servicesPage.verifyScreenshotProcessorHealthy();
   });
 
   test('should refresh service status on Refresh button click', async ({ page }) => {
     const servicesPage = new ServicesPage(page);
+    if (isFree() || isEnterprise()) {
+      await page.goto('/en/company/services');
+      await expect(servicesPage.mediaProcessorHeading).not.toBeVisible({ timeout: 5000 });
+      return;
+    }
     await servicesPage.goto();
     await servicesPage.clickRefresh();
     // After refresh, status headings should still be visible

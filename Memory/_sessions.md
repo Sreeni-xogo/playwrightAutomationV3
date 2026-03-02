@@ -36,3 +36,14 @@
 - 12:19 | Checkpoint | playwrightAutomationV3 — SignInPage updated: Google/Facebook/Apple SSO buttons added, Microsoft locator name fixed
 - 12:30 | Checkpoint | playwrightAutomationV3 — BRAIN 3.0 compliance audit: Level 2 dissolution completed for all 3 BRAINs, _sessions.md format corrected, Memory/.local/_index.md created
 - 12:30 | Session End | playwrightAutomationV3 — status: Active
+
+## 2026-03-02
+- 12:05 | BRAIN Refine | TierAwareTestGuards — goal: ACCOUNT_TIER env var (free/pro/enterprise) drives conditional assertions across all tier-sensitive specs; replaces hard-coded skips
+- 14:00 | Intent Done | TierAwareTestGuards — Intent 04 TierGuardReferralAndServices: Referral + Services skipped on Free + Enterprise in account-settings.spec.ts
+- 14:15 | Intent Done | TierAwareTestGuards — Intent 05 TierGuardFreePageAccess: Planners + Overlays + Widgets skipped on Free; Dashboard/Profile/Playlists CRUD extra guards added
+- 14:20 | Intent Done | TierAwareTestGuards — Intent 06 TierGuardFreeAssetLimits: Library URL CRUD + Players Add New skipped on Free
+- 14:30 | Intent Done | TierAwareTestGuards — Intent 07 ValidateAndDocument: 97 passed / 50 skipped / 0 failed on Free tier; all specs committed
+- 14:30 | Session End | TierAwareTestGuards — status: Complete
+
+## 2026-03-02 (session 2)
+- 15:00 | feat(e2e) | ZeroSkips — replaced all 50 Free-tier test.skip() with if/else tier branching; 147 passed / 0 skipped / 0 failed on Free tier

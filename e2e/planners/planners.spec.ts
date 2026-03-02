@@ -1,9 +1,11 @@
 import { test, expect } from '@playwright/test';
 import { PlannersPage } from '../pages/planners/PlannersPage';
 import { PlannerEditPage } from '../pages/planners/PlannerEditPage';
+import { isFree } from '../utils/tierGuard';
 
 // AIDEV-NOTE: Requires authenticated session — setup saves .auth/state.json, consumed here
 test.use({ storageState: '.auth/state.json' });
+// AIDEV-NOTE: Free tier — /en/planners redirects to /en/upgrade. Tests assert redirect; Pro runs full CRUD.
 
 const PLANNER_NAME = `AutoTest Planner ${Date.now()}`;
 const PLANNER_UPDATED_NAME = `AutoTest Planner Updated ${Date.now()}`;
@@ -15,18 +17,33 @@ const PLANNER_UPDATED_NAME = `AutoTest Planner Updated ${Date.now()}`;
 test.describe('Planners — list page', () => {
   test('should display page heading', async ({ page }) => {
     const plannersPage = new PlannersPage(page);
+    if (isFree()) {
+      await page.goto('/en/planners');
+      await expect(page).toHaveURL('/en/upgrade');
+      return;
+    }
     await plannersPage.goto();
     await plannersPage.verifyOnPlannersPage();
   });
 
   test('should display Add New link', async ({ page }) => {
     const plannersPage = new PlannersPage(page);
+    if (isFree()) {
+      await page.goto('/en/planners');
+      await expect(page).toHaveURL('/en/upgrade');
+      return;
+    }
     await plannersPage.goto();
     await plannersPage.verifyAddNewLinkVisible();
   });
 
   test('should navigate to Add New planner page', async ({ page }) => {
     const plannersPage = new PlannersPage(page);
+    if (isFree()) {
+      await page.goto('/en/planners');
+      await expect(page).toHaveURL('/en/upgrade');
+      return;
+    }
     await plannersPage.goto();
     await plannersPage.clickAddNew();
     await expect(page).toHaveURL('/en/planners/add');
@@ -41,6 +58,11 @@ test.describe('Planners — list page', () => {
 test.describe.serial('Planners — CRUD', () => {
   test('create: should create a new planner', async ({ page }) => {
     const plannerEditPage = new PlannerEditPage(page);
+    if (isFree()) {
+      await page.goto('/en/planners/add');
+      await expect(page).toHaveURL('/en/upgrade');
+      return;
+    }
     await plannerEditPage.gotoAddNew();
     await plannerEditPage.verifyOnAddNewPage();
     await plannerEditPage.setPlannerName(PLANNER_NAME);
@@ -54,6 +76,11 @@ test.describe.serial('Planners — CRUD', () => {
 
   test('create: new planner page should display calendar and Manage Playlists button', async ({ page }) => {
     const plannerEditPage = new PlannerEditPage(page);
+    if (isFree()) {
+      await page.goto('/en/planners/add');
+      await expect(page).toHaveURL('/en/upgrade');
+      return;
+    }
     await plannerEditPage.gotoAddNew();
     await plannerEditPage.verifyManagePlaylistsVisible();
     await plannerEditPage.verifySaveButtonVisible();
@@ -63,6 +90,11 @@ test.describe.serial('Planners — CRUD', () => {
   test('edit: should rename the created planner', async ({ page }) => {
     const plannersPage = new PlannersPage(page);
     const plannerEditPage = new PlannerEditPage(page);
+    if (isFree()) {
+      await page.goto('/en/planners');
+      await expect(page).toHaveURL('/en/upgrade');
+      return;
+    }
     await plannersPage.goto();
     await plannersPage.verifyPlannerVisible(PLANNER_NAME);
     await plannersPage.clickPlanner(PLANNER_NAME);
@@ -76,6 +108,11 @@ test.describe.serial('Planners — CRUD', () => {
   test('edit: should toggle Select All Days checkbox', async ({ page }) => {
     const plannersPage = new PlannersPage(page);
     const plannerEditPage = new PlannerEditPage(page);
+    if (isFree()) {
+      await page.goto('/en/planners');
+      await expect(page).toHaveURL('/en/upgrade');
+      return;
+    }
     await plannersPage.goto();
     await plannersPage.clickPlanner(PLANNER_UPDATED_NAME);
     await plannerEditPage.verifyOnEditPage();
@@ -88,6 +125,11 @@ test.describe.serial('Planners — CRUD', () => {
 
   test('delete: should delete the planner', async ({ page }) => {
     const plannersPage = new PlannersPage(page);
+    if (isFree()) {
+      await page.goto('/en/planners');
+      await expect(page).toHaveURL('/en/upgrade');
+      return;
+    }
     await plannersPage.goto();
     await page.waitForLoadState('networkidle');
     const optionsBtn = plannersPage.getOptionsButtonForPlanner(PLANNER_UPDATED_NAME);

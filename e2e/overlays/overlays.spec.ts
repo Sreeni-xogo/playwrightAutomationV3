@@ -3,6 +3,8 @@ import { fileURLToPath } from 'url';
 import path from 'path';
 import { OverlaysPage } from '../pages/overlays/OverlaysPage';
 import { OverlayEditPage } from '../pages/overlays/OverlayEditPage';
+import { isFree } from '../utils/tierGuard';
+// AIDEV-NOTE: Free tier — /en/overlays redirects to /en/upgrade. Tests assert redirect; Pro runs full CRUD.
 
 // AIDEV-NOTE: PATTERN-013 — overlay save requires a background image or web surface
 // A minimal 1x1 PNG is used as the canvas background to satisfy the validation
@@ -22,24 +24,44 @@ const OVERLAY_UPDATED_NAME = `AutoTest Overlay Updated ${Date.now()}`;
 test.describe('Overlays — list page', () => {
   test('should display page heading', async ({ page }) => {
     const overlaysPage = new OverlaysPage(page);
+    if (isFree()) {
+      await page.goto('/en/overlays');
+      await expect(page).toHaveURL('/en/upgrade');
+      return;
+    }
     await overlaysPage.goto();
     await overlaysPage.verifyOnOverlaysPage();
   });
 
   test('should display Add New link', async ({ page }) => {
     const overlaysPage = new OverlaysPage(page);
+    if (isFree()) {
+      await page.goto('/en/overlays');
+      await expect(page).toHaveURL('/en/upgrade');
+      return;
+    }
     await overlaysPage.goto();
     await overlaysPage.verifyAddNewLinkVisible();
   });
 
   test('should display pagination info', async ({ page }) => {
     const overlaysPage = new OverlaysPage(page);
+    if (isFree()) {
+      await page.goto('/en/overlays');
+      await expect(page).toHaveURL('/en/upgrade');
+      return;
+    }
     await overlaysPage.goto();
     await overlaysPage.verifyPaginationVisible();
   });
 
   test('should navigate to Add New overlay page', async ({ page }) => {
     const overlaysPage = new OverlaysPage(page);
+    if (isFree()) {
+      await page.goto('/en/overlays');
+      await expect(page).toHaveURL('/en/upgrade');
+      return;
+    }
     await overlaysPage.goto();
     await overlaysPage.clickAddNew();
     await expect(page).toHaveURL('/en/overlays/add');
@@ -54,6 +76,11 @@ test.describe('Overlays — list page', () => {
 test.describe.serial('Overlays — CRUD', () => {
   test('create: should display Add New overlay page elements', async ({ page }) => {
     const overlayEditPage = new OverlayEditPage(page);
+    if (isFree()) {
+      await page.goto('/en/overlays/add');
+      await expect(page).toHaveURL('/en/upgrade');
+      return;
+    }
     await overlayEditPage.gotoAddNew();
     await overlayEditPage.verifyOnAddNewPage();
     await overlayEditPage.verifySaveButtonVisible();
@@ -63,6 +90,11 @@ test.describe.serial('Overlays — CRUD', () => {
 
   test('create: should create a new overlay using Full Screen template', async ({ page }) => {
     const overlayEditPage = new OverlayEditPage(page);
+    if (isFree()) {
+      await page.goto('/en/overlays/add');
+      await expect(page).toHaveURL('/en/upgrade');
+      return;
+    }
     await overlayEditPage.gotoAddNew();
     await overlayEditPage.setOverlayName(OVERLAY_NAME);
     await overlayEditPage.clickFullScreenTemplate();
@@ -78,6 +110,11 @@ test.describe.serial('Overlays — CRUD', () => {
   test('edit: should rename the created overlay', async ({ page }) => {
     const overlaysPage = new OverlaysPage(page);
     const overlayEditPage = new OverlayEditPage(page);
+    if (isFree()) {
+      await page.goto('/en/overlays');
+      await expect(page).toHaveURL('/en/upgrade');
+      return;
+    }
     await overlaysPage.goto();
     await overlaysPage.verifyOverlayVisible(OVERLAY_NAME);
     await overlaysPage.clickOverlay(OVERLAY_NAME);
@@ -90,6 +127,11 @@ test.describe.serial('Overlays — CRUD', () => {
 
   test('delete: should delete the overlay', async ({ page }) => {
     const overlaysPage = new OverlaysPage(page);
+    if (isFree()) {
+      await page.goto('/en/overlays');
+      await expect(page).toHaveURL('/en/upgrade');
+      return;
+    }
     await overlaysPage.goto();
     await page.waitForLoadState('networkidle');
     const optionsBtn = overlaysPage.getOptionsButtonForOverlay(OVERLAY_UPDATED_NAME);
