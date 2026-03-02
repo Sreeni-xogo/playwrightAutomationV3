@@ -44,3 +44,6 @@
 - 14:20 | Intent Done | TierAwareTestGuards — Intent 06 TierGuardFreeAssetLimits: Library URL CRUD + Players Add New skipped on Free
 - 14:30 | Intent Done | TierAwareTestGuards — Intent 07 ValidateAndDocument: 97 passed / 50 skipped / 0 failed on Free tier; all specs committed
 - 14:30 | Session End | TierAwareTestGuards — status: Complete
+
+## 2026-03-02 (session 2)
+- 15:00 | feat(e2e) | ZeroSkips — replaced all 50 Free-tier test.skip() with if/else tier branching; 147 passed / 0 skipped / 0 failed on Free tier
