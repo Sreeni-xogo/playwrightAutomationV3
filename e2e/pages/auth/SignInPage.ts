@@ -30,7 +30,8 @@ export class SignInPage extends BasePage {
     this.forgotPasswordLink = page.getByRole('link', { name: 'Forgot password' });
     // AIDEV-NOTE: Sign Up link lives in the side panel on the login page
     this.signUpLink = page.getByRole('link', { name: 'Sign Up for Free' });
-    this.microsoftSignInButton = page.getByRole('button', { name: 'Login with Microsoft' });
+    // AIDEV-NOTE: DIFF-14 — pre-prod only has Microsoft SSO ("Sign in with Microsoft"); Google/Facebook/Apple absent
+    this.microsoftSignInButton = page.getByRole('button', { name: 'Sign in with Microsoft' });
     this.googleSignInButton = page.getByRole('button', { name: 'Login with Google' });
     this.facebookSignInButton = page.getByRole('button', { name: 'Login with Facebook' });
     this.appleSignInButton = page.getByRole('button', { name: 'Login with Apple' });
@@ -111,10 +112,8 @@ export class SignInPage extends BasePage {
     await expect(this.loginButton).toBeVisible();
     await expect(this.forgotPasswordLink).toBeVisible();
     await expect(this.signUpLink).toBeVisible();
+    // AIDEV-NOTE: DIFF-14 — pre-prod only has Microsoft SSO; Google/Facebook/Apple not present
     await expect(this.microsoftSignInButton).toBeVisible();
-    await expect(this.googleSignInButton).toBeVisible();
-    await expect(this.facebookSignInButton).toBeVisible();
-    await expect(this.appleSignInButton).toBeVisible();
     await expect(this.languageSelector).toBeVisible();
     await expect(this.captchaCheckbox).toBeVisible();
   }

@@ -91,6 +91,8 @@ export class ProfilePage extends BasePage {
 
   async saveProfile(): Promise<void> {
     await this.saveButton.click();
+    // AIDEV-NOTE: PATTERN-001 — wait for save API call to complete before any subsequent navigation
+    await this.page.waitForLoadState('networkidle');
   }
 
   async clickChangeEmail(): Promise<void> {

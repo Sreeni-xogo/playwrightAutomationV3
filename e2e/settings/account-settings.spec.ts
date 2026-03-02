@@ -15,8 +15,7 @@ test.use({ storageState: '.auth/state.json' });
 // Pro only: referral page is accessible with copy code/link buttons.
 // ---------------------------------------------------------------------------
 
-// AIDEV-NOTE: DIFF-13 — /en/account/referral returns 404 on pre-prod. Skipped.
-test.describe.skip('Referral', () => {
+test.describe('Referral', () => {
   test('should display page elements', async ({ page }) => {
     const referralPage = new ReferralPage(page);
     if (isFree() || isEnterprise()) {
@@ -82,8 +81,7 @@ test.describe('Integration', () => {
 // Pro only: services page is accessible with Media/Screenshot Processor status.
 // ---------------------------------------------------------------------------
 
-// AIDEV-NOTE: DIFF-10 — /en/company/services returns 404 on pre-prod. Skipped.
-test.describe.skip('Services', () => {
+test.describe('Services', () => {
   test('should display page elements', async ({ page }) => {
     const servicesPage = new ServicesPage(page);
     if (isFree() || isEnterprise()) {

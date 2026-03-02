@@ -6,13 +6,12 @@ import { isFree, isPro, isEnterprise } from '../utils/tierGuard';
 test.use({ storageState: '.auth/state.json' });
 
 // AIDEV-NOTE: Billing tests are UI verification only — no card updates or invoice downloads are performed
-// AIDEV-NOTE: DIFF-08 — Pre-prod account is Enterprise Tier; standard billing sections absent. Skipped on pre-prod.
 // Tier behaviour:
 //   Pro        → standard billing page with all sections
 //   Enterprise → same route shows "Enterprise Tier" heading + "Contact Support" button
 //   Free       → /en/billing/payment redirects to /en/upgrade ("Unlock the Full Power of XOGO")
 
-test.describe.skip('Billing — Payment & Billing page (UI only)', () => {
+test.describe('Billing — Payment & Billing page (UI only)', () => {
   test('should display page heading and description', async ({ page }) => {
     const billingPage = new BillingPage(page);
     if (isPro()) {
