@@ -1,12 +1,12 @@
 import { test, expect } from '@playwright/test';
 import { ReferralPage } from '../pages/settings/ReferralPage';
-
-// AIDEV-NOTE: Requires authenticated session — setup saves .auth/state.json, consumed here
-test.use({ storageState: '.auth/state.json' });
 import { HandoverDeletePage } from '../pages/settings/HandoverDeletePage';
 import { IntegrationPage } from '../pages/settings/IntegrationPage';
 import { ServicesPage } from '../pages/settings/ServicesPage';
 import { CompanyPlayersPage } from '../pages/settings/CompanyPlayersPage';
+
+// AIDEV-NOTE: Requires authenticated session — setup saves .auth/state.json, consumed here
+test.use({ storageState: '.auth/state.json' });
 
 // ---------------------------------------------------------------------------
 // Referral Page
